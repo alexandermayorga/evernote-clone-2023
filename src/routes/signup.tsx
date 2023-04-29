@@ -1,7 +1,8 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import "./login.scss";
 import { useAuth } from "../context/AuthContext";
 import { Link, Navigate } from "react-router-dom";
+import { AuthError } from "firebase/auth";
 
 type Props = {
   title: string;
@@ -10,20 +11,29 @@ type Props = {
 export default function SignUp({ title }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { signup, user } = useAuth();
-  if(user) return <Navigate to={"/dashboard"} />
+  if (user) return <Navigate to={"/dashboard"} />;
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
 
     setLoading(true);
-    signup(email, password, (error) => {
-      if (error && error.code == "auth/email-already-in-use")
-        alert("Email is already in use. Please try a different one");
-    });
+
+    try {
+      await signup(email, password);
+    } catch (error:unknown) {
+      const knownError = error as AuthError;
+      if (knownError.code == "auth/email-already-in-use"){
+         alert("Email is already in use. Please try a different one");
+        }else{
+          alert("There was an issue with your request. Please check your information and try again.");
+          console.log(knownError.code)
+          console.log(knownError.message)
+        }
+    }
 
     setLoading(false);
   }
@@ -83,7 +93,9 @@ export default function SignUp({ title }: Props) {
           Sign Up
         </button>
         <div>
-          <Link to='/login' className="">Don't have have an account yet? Sign up here.</Link>
+          <Link to="/login" className="">
+            Don't have have an account yet? Sign up here.
+          </Link>
         </div>
         <p className="mt-5 mb-3 text-muted">© 2023</p>
       </form>

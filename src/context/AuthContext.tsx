@@ -11,6 +11,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  UserCredential,
 } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -20,21 +21,13 @@ type AuthProviderProps = {
 
 type AuthContextType = {
   user: User | null;
-  login: (
-    email: string,
-    password: string,
-    callback?: (error: any, user?: User) => void
-  ) => void;
-  signup: (
-    email: string,
-    password: string,
-    callback?: (error: any, user?: User) => void
-  ) => void;
-  signout: (callback: (error: any) => void) => void;
+  login: (email: string, password: string) => Promise<UserCredential>;
+  signout: () => Promise<void>;
+  signup: (email: string, password: string) => Promise<UserCredential>;
 };
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
+//Custom Hook to easily pull auth context data
 export const useAuth = () => useContext(AuthContext);
 
 //COMPONENT
@@ -50,53 +43,17 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     return unsubscribe;
   }, []);
 
-  function signup(
-    email: string,
-    password: string,
-    callback?: (error: any, user?: User) => void
-  ) {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user; // Signed in
-        if (callback) callback(null, user);
-      })
-      .catch((error) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
-        if (callback) callback(error);
-      });
+  const signup = (email: string, password: string) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  const login = (email: string, password: string) => {
+    return signInWithEmailAndPassword(auth, email, password);
   }
 
-  function login(
-    email: string,
-    password: string,
-    callback?: (error: any, user?: User) => void
-  ) {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        if (callback) callback(null, user);
-      })
-      .catch((error) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
-        if (callback) callback(error);
-      });
-  }
+  const signout = () => signOut(auth);
 
-  function signout(callback?: (error: any) => void) {
-    signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-        if (callback) callback(null);
-      })
-      .catch((error) => {
-        if (callback) callback(error);
-      });
-  }
-
-  const value = {
+  const contextValue = {
     user,
     signup,
     signout,
@@ -104,7 +61,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={contextValue}>
       {!loading && children}
     </AuthContext.Provider>
   );
