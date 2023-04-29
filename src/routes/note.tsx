@@ -18,7 +18,7 @@ export function loader({ params } : {params: Params}) {
 export default function Note() {
   const noteFromLoader = useLoaderData() as NoteType;
 
-  const pageTitle = `${noteFromLoader.title}`;
+  const pageTitle = `${noteFromLoader.title} | Mammoth Notes`;
   useEffect(() => {
     document.title = pageTitle
   }, [noteFromLoader])

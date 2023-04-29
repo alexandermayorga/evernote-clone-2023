@@ -1,7 +1,12 @@
 import { AuthError } from "firebase/auth";
 import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
 
 export default function Index() {
+  const pageTitle = `Dashboard | Mammoth Notes`;
+  useEffect(() => {
+    document.title = pageTitle
+  }, [])
   const { signout } = useAuth();
 
   async function handleSignOut() {

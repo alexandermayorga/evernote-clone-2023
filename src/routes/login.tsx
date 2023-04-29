@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import "./login.scss";
 import { useAuth } from "../context/AuthContext";
 import { Link, Navigate } from "react-router-dom";
@@ -9,6 +9,11 @@ type Props = {
 };
 
 export default function Login({ title }: Props) {
+  const pageTitle = `${title}`;
+  useEffect(() => {
+    document.title = pageTitle
+  }, [])
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [error, setError] = useState("");
@@ -17,7 +22,7 @@ export default function Login({ title }: Props) {
   const { login, user } = useAuth();
   if (user) return <Navigate to={"/dashboard"} />;
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
 
     setLoading(true);
@@ -27,7 +32,7 @@ export default function Login({ title }: Props) {
       const knownError = error as AuthError;
       if (knownError.code == "auth/wrong-password") {
         alert("Login credentials are incorrect. Please try again");
-      } else if ((knownError.code == "auth/user-not-found")) {
+      } else if (knownError.code == "auth/user-not-found") {
         alert("No user found with that email. Please check and try again");
       } else {
         alert(

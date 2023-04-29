@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./login.scss";
 import { useAuth } from "../context/AuthContext";
 import { Link, Navigate } from "react-router-dom";
@@ -9,6 +9,11 @@ type Props = {
 };
 
 export default function SignUp({ title }: Props) {
+  const pageTitle = `${title}`;
+  useEffect(() => {
+    document.title = pageTitle;
+  }, []);
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [error, setError] = useState("");
@@ -24,15 +29,17 @@ export default function SignUp({ title }: Props) {
 
     try {
       await signup(email, password);
-    } catch (error:unknown) {
+    } catch (error: unknown) {
       const knownError = error as AuthError;
-      if (knownError.code == "auth/email-already-in-use"){
-         alert("Email is already in use. Please try a different one");
-        }else{
-          alert("There was an issue with your request. Please check your information and try again.");
-          console.log(knownError.code)
-          console.log(knownError.message)
-        }
+      if (knownError.code == "auth/email-already-in-use") {
+        alert("Email is already in use. Please try a different one");
+      } else {
+        alert(
+          "There was an issue with your request. Please check your information and try again."
+        );
+        console.log(knownError.code);
+        console.log(knownError.message);
+      }
     }
 
     setLoading(false);
