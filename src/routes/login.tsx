@@ -1,29 +1,47 @@
-import { FormEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import "./login.scss";
 import { useAuth } from "../context/AuthContext";
 import { Link, Navigate } from "react-router-dom";
+import { AuthError } from "firebase/auth";
 
 type Props = {
   title: string;
 };
 
 export default function Login({ title }: Props) {
+  const pageTitle = `${title}`;
+  useEffect(() => {
+    document.title = pageTitle
+  }, [])
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { login, user } = useAuth();
-  if(user) return <Navigate to={"/dashboard"} />
+  if (user) return <Navigate to={"/dashboard"} />;
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
 
     setLoading(true);
-    login(email, password, (error) => {
-      // if (error) console.log(error.code);
-      if (error && error.code == "auth/wrong-password") alert("Login credentials are not correct. Please try again");
-    });
+    try {
+      await login(email, password);
+    } catch (error: unknown) {
+      const knownError = error as AuthError;
+      if (knownError.code == "auth/wrong-password") {
+        alert("Login credentials are incorrect. Please try again");
+      } else if (knownError.code == "auth/user-not-found") {
+        alert("No user found with that email. Please check and try again");
+      } else {
+        alert(
+          "There was an issue with your request. Please check your information and try again."
+        );
+        console.log(knownError.code);
+        console.log(knownError.message);
+      }
+    }
 
     setLoading(false);
   }
@@ -83,7 +101,9 @@ export default function Login({ title }: Props) {
           Sign in
         </button>
         <div>
-          <Link to='/signup' className="">Already have an account? Log in here.</Link>
+          <Link to="/signup" className="">
+            Already have an account? Log in here.
+          </Link>
         </div>
         <p className="mt-5 mb-3 text-muted">© 2023</p>
       </form>

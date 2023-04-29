@@ -1,12 +1,22 @@
+import { AuthError } from "firebase/auth";
 import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
 
 export default function Index() {
+  const pageTitle = `Dashboard | Mammoth Notes`;
+  useEffect(() => {
+    document.title = pageTitle
+  }, [])
   const { signout } = useAuth();
 
-  function handleSignOut() {
-    signout((error) => {
-      if (error) console.log(error);
-    });
+  async function handleSignOut() {
+    try {
+      await signout();
+    } catch (error) {
+      const knownError = error as AuthError;
+      alert("There was an error Logging you out. Please refresh the page and try again")
+      console.log(knownError.message);
+    }
   }
 
   return (
