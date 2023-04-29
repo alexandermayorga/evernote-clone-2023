@@ -1,0 +1,27 @@
+@import "bootstrap";
+
+body,
+html,
+.full-height {
+  min-height: 100vh;
+}
+
+.main {
+  height: 100vh;
+  max-height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+#sidebar {
+  // background: #f00;
+  max-width: 330px;
+  // max-width: 380px;
+}
+#page-content {
+  background: #bada55;
+}
+
+.scrollarea {
+  overflow-y: auto;
+}
