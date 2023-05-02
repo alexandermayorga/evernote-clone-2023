@@ -25,3 +25,8 @@ html,
 .scrollarea {
   overflow-y: auto;
 }
+
+.ce-block__content,
+.ce-toolbar__content {
+  max-width: 85%;
+}

@@ -1,21 +1,68 @@
-import { ReactElement, createContext, useContext, useState } from "react"
+import {
+  ReactElement,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import {
+  User,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  UserCredential,
+} from "firebase/auth";
+import { auth } from "../firebase";
 
-type Props = {
-    children: ReactElement
-}
+type AuthProviderProps = {
+  children: ReactElement;
+};
 
-const TemplateContext = createContext(null);
+type AuthContextType = {
+  user: User | null;
+  login: (email: string, password: string) => Promise<UserCredential>;
+  signout: () => Promise<void>;
+  signup: (email: string, password: string) => Promise<UserCredential>;
+};
 
-export function useTemplate(){
-    return useContext(TemplateContext);
-}
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+//Custom Hook to easily pull auth context data
+export const useAuth = () => useContext(AuthContext);
 
-export default function AuthProvider({children}: Props) {
-  const [template, setTemplate] = useState(null)
+//COMPONENT
+export default function TemplateAuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (newUser) => {
+      setUser(newUser);
+      setLoading(false); //At this point it did the verification to check if there is a user signed in.
+    });
+    return unsubscribe;
+  }, []);
+
+  const signup = (email: string, password: string) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  const login = (email: string, password: string) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  const signout = () => signOut(auth);
+
+  const contextValue = {
+    user,
+    signup,
+    signout,
+    login,
+  };
 
   return (
-    <TemplateContext.Provider value={template}>
-        {children}
-    </TemplateContext.Provider>
-  )
+    <AuthContext.Provider value={contextValue}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 }
