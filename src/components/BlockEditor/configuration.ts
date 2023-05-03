@@ -120,6 +120,7 @@ const configuration: EditorConfig = {
    * Enable autofocus
    */
   autofocus: true,
+  readOnly: true
 };
 
 

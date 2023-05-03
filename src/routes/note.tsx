@@ -2,8 +2,12 @@
 import { Params, useLoaderData } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import notes, { Note as NoteType } from "../notes.ts";
-import EditorJS from "@editorjs/editorjs";
-import configuration from "../components/TextEditor/configuration";
+import EditorJS, { API, OutputData } from "@editorjs/editorjs";
+import { useAuth } from "../context/AuthContext.tsx";
+import { firestore } from "../firebase.ts";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+// import BlockEditor from "../components/BlockEditor/index.tsx";
+import BlockEditor from "../components/Editor.tsx";
 
 export function loader({ params }: { params: Params }) {
   const note = notes.find((note) => note.id == parseInt(params.noteId || ""));
@@ -17,89 +21,85 @@ export function loader({ params }: { params: Params }) {
 }
 
 export default function Note() {
-  const noteFromLoader = useLoaderData() as NoteType;
-  const pageTitle = `${noteFromLoader.title} | Mammoth Notes`;
+  const { user } = useAuth();
+
+  const note = useLoaderData() as NoteType;
+  const pageTitle = `${note.title} | Mammoth Notes`;
+  const [content, setContent] = useState<OutputData | null>();
+
   useEffect(() => {
     document.title = pageTitle;
-  }, [noteFromLoader]);
+    setContent(null);
+  }, [note]);
 
-  const [editorJS, setEditorJS] = useState<EditorJS | null>();
+  async function saveToDB() {
+    console.log(content);
+    return;
 
-  // useEffect(()=>{
-  //   if(!editorJS ) console.log('No Editor Found');
-  //   editorJS && console.log(editorJS)
+    try {
+      const docRef = await addDoc(collection(firestore, "notes"), {
+        author: user?.email || "nouser@test.com",
+        title: "The title of the note",
+        content: content,
+        created: new Date().getTime(),
+        updated: Timestamp.now(),
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
 
-  //   if(editorJS) editorJS.destroy();
-  // },[noteFromLoader])
+  const editorCore = useRef<EditorJS | null>(null);
 
-  const editorWrapperRef = useCallback(
-    (wrapper: HTMLDivElement) => {
-      if (wrapper == null) return;
+  const handleInitialize = useCallback((instance: EditorJS) => {
+    editorCore.current = instance;
+  }, []);
 
-      if (editorJS) editorJS.destroy();
-      wrapper.innerHTML = "";
-      const editorDiv = document.createElement("div");
-      editorDiv.setAttribute("id", "editorjs");
-      wrapper.append(editorDiv);
-
-      const newConfig = {
-        ...configuration,
-        data: {
-          time: 1682921026531,
-          blocks: [
-            {
-              id: "8apLrr1pFI",
-              type: "header",
-              data: {
-                text: "Lets Go PikaNotes " + noteFromLoader.title,
-                level: 2,
-              },
-            },
-          ],
-          version: "2.26.5",
-        },
-      };
-
-      setEditorJS(new EditorJS(newConfig));
-    },
-    [noteFromLoader]
-  );
-
-  const handleOnSave = () => {
-    editorJS &&
-      editorJS
-        .save()
-        .then((outputData) => {
-          console.log("Article data: ", outputData);
-        })
-        .catch((error) => {
-          console.log("Saving failed: ", error);
-        });
-  };
+  const handleSave = useCallback(async () => {
+    if (editorCore.current) {
+      const savedData = await editorCore.current.save();
+    }
+  }, []);
 
   function handleReadOnlyMode() {
-    editorJS && editorJS.readOnly.toggle();
+    editorCore.current?.isReady
+      .then(() => editorCore.current?.readOnly.toggle())
+      .catch((e) => console.log(e));
   }
 
   return (
     <div>
-      <h1>{noteFromLoader.title}</h1>
-      <button
-        className="btn btn-success me-3"
-        type="button"
-        onClick={handleOnSave}
-      >
-        Save
-      </button>
-      <button
-        className="btn btn-primary"
-        type="button"
-        onClick={handleReadOnlyMode}
-      >
-        Read Only Mode
-      </button>
+      <h1>{note.title}</h1>
+      <div>
+        <button
+          className="btn btn-success me-3"
+          type="button"
+          // onClick={handleOnSave}
+        >
+          Save
+        </button>
+        <button
+          className="btn btn-warning me-3"
+          type="button"
+          onClick={saveToDB}
+        >
+          Save to DB
+        </button>
+        <button
+          className="btn btn-primary"
+          type="button"
+          onClick={handleReadOnlyMode}
+        >
+          Read Only Mode
+        </button>
+      </div>
       <hr />
-      <div id="editorWrapper" ref={editorWrapperRef}></div>
+      <BlockEditor
+        onInitialize={handleInitialize}
+        note={note}
+        onChanges={(outputData:OutputData) => setContent(outputData)}
+      />
     </div>
   );
 }

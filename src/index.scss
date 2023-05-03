@@ -1,6 +1,10 @@
 @import "bootstrap";
 
 body,
+html{
+  background-color: #f8f8f8;
+}
+body,
 html,
 .full-height {
   min-height: 100vh;
@@ -19,7 +23,7 @@ html,
   // max-width: 380px;
 }
 #page-content {
-  background: #bada55;
+  // background: #bada55;
 }
 
 .scrollarea {
