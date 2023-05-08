@@ -1,7 +1,8 @@
 @import "bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons.css";
 
 body,
-html{
+html {
   background-color: #f8f8f8;
 }
 body,
@@ -33,4 +34,19 @@ html,
 .ce-block__content,
 .ce-toolbar__content {
   max-width: 85%;
+}
+
+.outline-focus-none:focus {
+  outline: none;
+}
+
+.rounded-pill {
+  &-start {
+    border-top-left-radius: var(--bs-border-radius-pill) !important;
+    border-bottom-left-radius: var(--bs-border-radius-pill) !important;
+  }
+  &-end {
+    border-top-right-radius: var(--bs-border-radius-pill) !important;
+    border-bottom-right-radius: var(--bs-border-radius-pill) !important;
+  }
 }

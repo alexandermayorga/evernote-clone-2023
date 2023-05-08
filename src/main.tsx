@@ -4,18 +4,20 @@ import "./index.scss";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Root from "./routes/root";
-import { loader as rootLoader } from "./components/Sidebar";
+import { loader as sidebarLoader } from "./components/Sidebar";
 import Note, { loader as noteLoader } from "./routes/note";
 import ErrorPage from "./error-page";
 import Index from "./routes";
 import Login from "./routes/login";
 import SignUp from "./routes/signup";
-import Dashboard from "./routes/dashboard";
+import Dashboard, { action as dashboardAction } from "./routes/dashboard";
+import { action as destroyAction } from "./routes/destroy";
 import ProtectedRoute from "./routes/protectedRoute";
 
 const router = createBrowserRouter([
   {
     element: <Root />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
@@ -31,9 +33,14 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
         errorElement: <ErrorPage />,
-        loader: rootLoader,
+        loader: sidebarLoader,
+        action: dashboardAction,
         children: [
           {
             errorElement: <ErrorPage />,
@@ -44,6 +51,11 @@ const router = createBrowserRouter([
                 element: <Note />,
                 loader: noteLoader,
                 // action: contactAction,
+              },
+              {
+                path: "note/:noteId/destroy",
+                action: destroyAction,
+                errorElement: <div>Oops! There was an error.</div>,
               },
             ],
           },

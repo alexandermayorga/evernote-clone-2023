@@ -1,61 +1,66 @@
-import EditorJS, { API } from "@editorjs/editorjs";
-import configuration from "./configuration";
-import { useCallback, useState } from "react";
+import { useEffect, useRef } from "react";
+import EditorJS, { API, OutputData } from "@editorjs/editorjs";
+import { FBNote } from "../../notes";
+import configuration, { DEFAULT_EDITORJS_DATA } from "./configuration";
 
-type BlockEditorProps = {
-  noteTitle: string;
-  readOnly?:boolean;
-  onChange?: (api: API, event: CustomEvent) => void;
+type PropTypes = {
+  note: FBNote;
+  onInitialize: (instance: EditorJS) => void;
+  onChanges: (content: OutputData) => void;
+  initialData?: OutputData | null;
 };
 
-export default function BlockEditor({
-  noteTitle,
-  readOnly,
-  onChange: onChangeHandler,
-}: BlockEditorProps) {
-  
-  const [editorJS, setEditorJS] = useState<EditorJS | null>();
+const BlockEditor = ({
+  note,
+  onInitialize,
+  onChanges,
+  initialData,
+}: PropTypes) => {
+  const ejInstance = useRef<EditorJS | null>();
 
-  const editorWrapperRef = useCallback(
-    (wrapper: HTMLDivElement) => {
-      if (wrapper == null) return;
+  const initEditor = () => {
+    const editor = new EditorJS({
+      onReady: () => {
+        ejInstance.current = editor;
+        onInitialize(editor);
+      },
+      onChange: async (api: API, event: CustomEvent) => {
+        let content;
+        if (!api.readOnly.isEnabled) {
+          try {
+            content = await editor.saver.save();
+            onChanges(content);
+          } catch (error) {
+            //TODO remove this for prod
+            alert(
+              "There was an error with the editor. Please check console for details"
+            );
+            console.log(error);
+          }
+        }
+      },
+      data: initialData || DEFAULT_EDITORJS_DATA,
+      autofocus: initialData ? false : true,
+      ...configuration,
+    });
+  };
 
-      if (editorJS) editorJS.destroy();
-      wrapper.innerHTML = "";
-      const editorDiv = document.createElement("div");
-      editorDiv.setAttribute("id", "editorjs");
-      wrapper.append(editorDiv);
+  useEffect(() => {
+    if (ejInstance.current === null) {
+      initEditor();
+    }
 
-      const newConfig = {
-        ...configuration,
-        data: {
-          time: 1682921026531,
-          blocks: [
-            {
-              id: "8apLrr1pFI",
-              type: "header",
-              data: {
-                text: "Lets Go PikaNotes " + noteTitle,
-                level: 2,
-              },
-            },
-          ],
-          version: "2.26.5",
-        },
-        onChange: (api: API, event: CustomEvent) => {
-          onChangeHandler && onChangeHandler(api, event);
-          // console.log("Now I know that Editor's content changed!", event);
-          // api.saver.save().then((OutputData) => console.log(OutputData));
-        },
-        readOnly:readOnly
-      };
+    return () => {
+      ejInstance.current?.destroy();
+      ejInstance.current = null;
+    };
+  }, [note]);
 
-      setEditorJS(new EditorJS(newConfig));
-    },
-    [noteTitle,readOnly]
+  return (
+    <>
+      <div id="editorjs"></div>
+    </>
   );
+};
 
-  console.log(editorWrapperRef)
-
-  return <div id="editorWrapper" ref={editorWrapperRef}></div>;
-}
+export default BlockEditor;

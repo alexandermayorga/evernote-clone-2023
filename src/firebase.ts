@@ -1,8 +1,24 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { Timestamp, addDoc, collection, getFirestore } from "firebase/firestore";
-import { User, getAuth } from "firebase/auth";
+import {
+  DocumentData,
+  DocumentReference,
+  DocumentSnapshot,
+  QuerySnapshot,
+  Timestamp,
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  updateDoc,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { OutputData } from "@editorjs/editorjs";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -16,36 +32,60 @@ const firebaseConfig = {
   storageBucket: "evernote-clone-2023.appspot.com",
   messagingSenderId: "853893628954",
   appId: "1:853893628954:web:bb688c33b64435579efda3",
-  measurementId: "G-8XVBQCQJTX"
+  measurementId: "G-8XVBQCQJTX",
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const analytics = getAnalytics(firebaseApp);
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 // Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(firebaseApp);
+export const auth = getAuth(app);
 // Initialize Cloud Firestore and get a reference to the service
-export const firestore = getFirestore(firebaseApp);
+export const db = getFirestore(app);
 
-
-async function saveToDB(content:OutputData, user: User) {
-  console.log(content);
-  return;
-
-  try {
-    const docRef = await addDoc(collection(firestore, "notes"), {
-      author: user?.email || "nouser@test.com",
-      title: "The title of the note",
-      content: content,
-      created: new Date().getTime(),
-      updated: Timestamp.now(),
-    });
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
+const COLLECTION_NOTES = "notes";
+/**
+ * Saves a New Document to DB
+ * @param id Note Id in Firebase
+ * @param title Note Title
+ * @param content Editor JS Output Data
+ * @returns Promise with either the DocRef or an error
+ */
+export function updateNote(id: string, title: string, content: OutputData) : Promise<void>{
+  return updateDoc(doc(db, COLLECTION_NOTES, id), {
+    title,
+    content,
+    updated: Timestamp.now()
+  });
 }
 
+export function createNote(userEmail: string): Promise<DocumentReference> {
+  // console.log(auth.currentUser?.email)  
+  return addDoc(collection(db, COLLECTION_NOTES), {
+    author: userEmail,
+    title: "Untitled",
+    content: null,
+    created: new Date().getTime(),
+    updated: Timestamp.now(),
+  });
+}
 
-export default firebaseApp;
+export function getAllNotes(): Promise<QuerySnapshot> {
+  const q = query(collection(db, COLLECTION_NOTES), orderBy("updated","desc"));
+  // const q = query(collection(db, COLLECTION_NOTES), orderBy("created"));
+  
+  return getDocs(q);
+  
+}
+
+export function getNote(id: string): Promise<DocumentSnapshot<DocumentData>> {
+  const docRef = doc(db, COLLECTION_NOTES, id);
+  return getDoc(docRef);
+}
+
+export function deleteNote(id: string) {
+  return deleteDoc(doc(db, COLLECTION_NOTES, id));
+}
+
+export default app;
