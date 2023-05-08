@@ -4,6 +4,15 @@ import Checklist from "@editorjs/checklist";
 import Quote from "@editorjs/quote";
 import Marker from "@editorjs/marker";
 import { EditorConfig } from "@editorjs/editorjs";
+import Underline from '@editorjs/underline';
+import Embed from '@editorjs/embed';
+import InlineCode from '@editorjs/inline-code';
+import Warning from '@editorjs/warning';
+import Delimiter from '@editorjs/delimiter';
+import Table from '@editorjs/table';
+import NestedList from '@editorjs/nested-list';
+
+
 
 const sampleData = {
   time: 1682921026531,
@@ -86,13 +95,29 @@ const configuration: EditorConfig = {
       // inlineToolbar: ["link"],
       inlineToolbar: true,
     },
+    underline: Underline,
+    embed: Embed,
+    inlineCode: {
+      class: InlineCode,
+      shortcut: 'CMD+SHIFT+M',
+    },
+    warning: Warning,
+    delimiter: Delimiter,
+    table: Table,
     list: {
-      class: List,
+      class: NestedList,
       inlineToolbar: true,
       config: {
-        defaultStyle: "unordered",
+        defaultStyle: 'unordered'
       },
     },
+    // list: {
+    //   class: List,
+    //   inlineToolbar: true,
+    //   config: {
+    //     defaultStyle: "unordered",
+    //   },
+    // },
     checklist: {
       class: Checklist,
       inlineToolbar: true,
