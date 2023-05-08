@@ -44,7 +44,6 @@ export default function Note() {
   );
   // console.log(note);
   // console.log(content);
-  
 
   // console.log(note);
   // console.log(note.title);
@@ -53,14 +52,14 @@ export default function Note() {
     document.title = pageTitle;
 
     setContent(note.content || DEFAULT_EDITORJS_DATA);
-        
-    text.current = note.title;
+
+    title.current = note.title;
   }, [note]);
 
   //This is for the Title
-  const text = useRef(note.title || "Untitled");
+  const title = useRef(note.title || "Untitled");
   const handleChange = (evt: ContentEditableEvent) =>
-    (text.current = evt.target.value);
+    (title.current = evt.target.value);
   // const handleBlur = () => console.log(text.current);
 
   //EditorJS Functionality
@@ -73,9 +72,9 @@ export default function Note() {
   const handleSave = async () => {
     if (!user) return navigate("/login");
     // if (!content) return console.log("Nothing new to save, Jinx!");
-    
+
     try {
-      await updateNote(note.id, text.current, content);
+      await updateNote(note.id, title.current, content);
       console.log("Document updated!");
     } catch (error) {
       //TODO remove for production
@@ -86,11 +85,38 @@ export default function Note() {
     }
   };
 
+  const delay = 5;
+  useEffect(
+    () => {
+      const timer1 = setTimeout(
+        () => console.log("Hi from timer"),
+        delay * 1000
+      );
+
+      // this will clear Timeout
+      // when component unmount like in willComponentUnmount
+      // and show will not change to true
+      return () => {
+        clearTimeout(timer1);
+      };
+    },
+    // useEffect will run only one time with empty []
+    // if you pass a value to array,
+    // like this - [data]
+    // than clearTimeout will run every time
+    // this value changes (useEffect re-run)
+    [content]
+  );
+
+  const handleEditorChanges = (outputData: OutputData) => {
+    setContent(outputData);
+  };
+
   return (
     <div id="note_wrapper">
       <div id="notes_header">
         <ContentEditable
-          html={text.current}
+          html={title.current}
           // onBlur={handleBlur}
           onChange={handleChange}
           className="h1 w-100 border-0 bg-transparent outline-focus-none p-0"
@@ -128,7 +154,7 @@ export default function Note() {
       <BlockEditor
         onInitialize={handleInitialize}
         note={note}
-        onChanges={(outputData: OutputData) => setContent(outputData)}
+        onChanges={handleEditorChanges}
         initialData={note.content}
       />
     </div>
