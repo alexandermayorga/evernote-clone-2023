@@ -66,12 +66,12 @@ export function createNote(userEmail: string): Promise<DocumentReference> {
     author: userEmail,
     title: "Untitled",
     content: null,
-    created: new Date().getTime(),
+    created: Timestamp.now(),
     updated: Timestamp.now(),
   });
 }
 
-export function getAllNotes(): Promise<QuerySnapshot> {
+export function getAllNotes(): Promise<QuerySnapshot<DocumentData>> {
   const q = query(collection(db, COLLECTION_NOTES), orderBy("updated","desc"));
   // const q = query(collection(db, COLLECTION_NOTES), orderBy("created"));
   
