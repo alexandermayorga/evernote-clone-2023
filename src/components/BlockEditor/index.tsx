@@ -5,7 +5,7 @@ import configuration, { DEFAULT_EDITORJS_DATA } from "./configuration";
 
 type PropTypes = {
   note: FBNote;
-  onInitialize: (instance: EditorJS) => void;
+  onInitialize?: (instance: EditorJS) => void;
   onChanges: (content: OutputData) => void;
   initialData?: OutputData | null;
 };
@@ -22,7 +22,7 @@ const BlockEditor = ({
     const editor = new EditorJS({
       onReady: () => {
         ejInstance.current = editor;
-        onInitialize(editor);
+        if(onInitialize) onInitialize(editor);
       },
       onChange: async (api: API, event: CustomEvent) => {
         let content;

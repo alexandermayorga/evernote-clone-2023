@@ -8,6 +8,8 @@ import { getNote, updateNote } from "../firebase.ts";
 import BlockEditor from "../components/BlockEditor";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { DEFAULT_EDITORJS_DATA } from "../components/BlockEditor/configuration.ts";
+import { Toast, ToastContainer } from "react-bootstrap";
+import { stripHTMLFromString } from "../utils.ts";
 
 export async function loader({ params }: { params: Params }) {
   if (!params.noteId) return null;
@@ -35,41 +37,42 @@ export async function loader({ params }: { params: Params }) {
 export default function Note() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [showToast, setShowToast] = useState(false);
 
   const note = useLoaderData() as FBNote;
-  const pageTitle = `${note.title} | Mammoth Notes`;
-  // const [title, setTitle] = useState(note.title || "Untitled");
   const [content, setContent] = useState<OutputData>(
     note.content || DEFAULT_EDITORJS_DATA
   );
+  const [titleContainer, setTitleContainer] = useState<string>(note.title);
   // console.log(note);
   // console.log(content);
-
-  // console.log(note);
   // console.log(note.title);
 
   useEffect(() => {
-    document.title = pageTitle;
+    document.title = `${note.title} | Mammoth Notes`;
 
-    setContent(note.content || DEFAULT_EDITORJS_DATA);
-
+    setTitleContainer(note.title);
     title.current = note.title;
+    setContent(note.content || DEFAULT_EDITORJS_DATA);
   }, [note]);
 
   //This is for the Title
   const title = useRef(note.title || "Untitled");
-  const handleChange = (evt: ContentEditableEvent) =>
-    (title.current = evt.target.value);
+  const handleTitleChange = (evt: ContentEditableEvent) => {
+    const cleanTitle = stripHTMLFromString(evt.target.value);
+    title.current = cleanTitle;
+    setTitleContainer(cleanTitle);
+  };
   // const handleBlur = () => console.log(text.current);
 
   //EditorJS Functionality
-  const editorCore = useRef<EditorJS | null>(null);
-  const handleInitialize = useCallback(
-    (instance: EditorJS) => (editorCore.current = instance),
-    []
-  );
+  // const editorCore = useRef<EditorJS | null>(null);
+  // const handleInitialize = useCallback(
+  //   (instance: EditorJS) => (editorCore.current = instance),
+  //   []
+  // );
 
-  const handleSave = async () => {
+  const handleButtonSave = async () => {
     if (!user) return navigate("/login");
     // if (!content) return console.log("Nothing new to save, Jinx!");
 
@@ -85,53 +88,53 @@ export default function Note() {
     }
   };
 
-  const delay = 5;
+  const delay = 4;
   useEffect(
     () => {
-      const timer1 = setTimeout(
-        () => console.log("Hi from timer"),
-        delay * 1000
-      );
+      if (content == note.content && titleContainer == note.title) return;
 
-      // this will clear Timeout
-      // when component unmount like in willComponentUnmount
-      // and show will not change to true
+      // console.log(note.id, titleContainer, content);
+      const idToUpdate = note.id;
+      const newTitle = titleContainer;
+      const newConntent = { ...content };
+
+      const timer1 = setTimeout(() => {
+        console.log("Hi from timer");
+        setShowToast(true);
+        updateNote(idToUpdate, newTitle, newConntent)
+          .then(() => {
+            console.log("Document updated!");
+            setTimeout(() => {
+              setShowToast(false);
+            }, 1000);
+          })
+          .catch((error) => {
+            //TODO remove for production
+            alert(
+              "An Error occurred saving the document. Please check console for details."
+            );
+            console.log(error);
+          });
+      }, delay * 1000);
+
       return () => {
         clearTimeout(timer1);
       };
     },
-    // useEffect will run only one time with empty []
-    // if you pass a value to array,
-    // like this - [data]
-    // than clearTimeout will run every time
-    // this value changes (useEffect re-run)
-    [content]
+    [content, titleContainer]
   );
 
-  const handleEditorChanges = (outputData: OutputData) => {
+  const handleEditorChanges = (outputData: OutputData) =>
     setContent(outputData);
-  };
 
   return (
     <div id="note_wrapper">
       <div id="notes_header">
-        <ContentEditable
-          html={title.current}
-          // onBlur={handleBlur}
-          onChange={handleChange}
-          className="h1 w-100 border-0 bg-transparent outline-focus-none p-0"
-        />
-        {/* <input
-          type="text"
-          value={title}
-          className="h1 w-100 border-0 bg-transparent outline-focus-none p-0"
-          onChange={(e) => setTitle(e.target.value)}
-        /> */}
-        <div id="buttons">
+        <div id="buttons" className="w-100 d-flex justify-content-end mb-2">
           <button
-            className="btn btn-success me-2"
+            className="btn btn-success btn-sm me-2"
             type="button"
-            onClick={handleSave}
+            onClick={handleButtonSave}
           >
             <i className="bi bi-database"></i> Update
           </button>
@@ -144,19 +147,37 @@ export default function Note() {
             }}
             className="d-inline"
           >
-            <button type="submit" className="btn btn-danger">
+            <button type="submit" className="btn btn-danger btn-sm">
               <i className="bi bi-trash"></i> Delete
             </button>
           </Form>
         </div>
+        <ContentEditable
+          html={title.current}
+          // onBlur={handleBlur}
+          onChange={handleTitleChange}
+          className="h1 w-100 border-0 bg-transparent outline-focus-none p-0"
+        />
       </div>
       <hr />
       <BlockEditor
-        onInitialize={handleInitialize}
         note={note}
+        // onInitialize={handleInitialize}
         onChanges={handleEditorChanges}
         initialData={note.content}
       />
+      <ToastContainer position={"bottom-end"} className="p-3">
+        <Toast
+          show={showToast}
+          className="w-auto bg-transparent border-0 shadow-none"
+        >
+          <Toast.Body>
+            <div className="spinner-border text-success " role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </div>
   );
 }

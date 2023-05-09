@@ -3,10 +3,7 @@ import Sidebar from "../components/Sidebar";
 import { useEffect } from "react";
 import { auth, createNote } from "../firebase";
 
-export async function action() {
-  // const formData = await request.formData();
-  // const updates = Object.fromEntries(formData);
-  
+export async function action() {  
   //#TODO validate string instead of File
   const docRef = await createNote(auth.currentUser?.email as string)
   // await updateContact(params.contactId, updates);
@@ -14,11 +11,6 @@ export async function action() {
 }
 
 export default function Dashboard() {
-  const pageTitle = `Dashboard | Mammoth Notes`;
-  useEffect(() => {
-    document.title = pageTitle;
-  }, []);
-
   return (
     <>
       <div className="main d-flex">
