@@ -1,8 +1,13 @@
 // type Props = {}
-import { Form, Params, useLoaderData, useNavigate } from "react-router-dom";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Form,
+  Params,
+  useLoaderData,
+  useNavigate,
+} from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { FBNote } from "../notes.ts";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
+import { OutputData } from "@editorjs/editorjs";
 import { useAuth } from "../context/AuthContext.tsx";
 import { getNote, updateNote } from "../firebase.ts";
 import BlockEditor from "../components/BlockEditor";
@@ -89,40 +94,37 @@ export default function Note() {
   };
 
   const delay = 4;
-  useEffect(
-    () => {
-      if (content == note.content && titleContainer == note.title) return;
+  useEffect(() => {
+    if (content == note.content && titleContainer == note.title) return;
 
-      // console.log(note.id, titleContainer, content);
-      const idToUpdate = note.id;
-      const newTitle = titleContainer;
-      const newConntent = { ...content };
+    // console.log(note.id, titleContainer, content);
+    const idToUpdate = note.id;
+    const newTitle = titleContainer;
+    const newContent = { ...content };
 
-      const timer1 = setTimeout(() => {
-        console.log("Hi from timer");
-        setShowToast(true);
-        updateNote(idToUpdate, newTitle, newConntent)
-          .then(() => {
-            console.log("Document updated!");
-            setTimeout(() => {
-              setShowToast(false);
-            }, 1000);
-          })
-          .catch((error) => {
-            //TODO remove for production
-            alert(
-              "An Error occurred saving the document. Please check console for details."
-            );
-            console.log(error);
-          });
-      }, delay * 1000);
+    const timer1 = setTimeout(() => {
+      console.log("Hi from timer");
+      setShowToast(true);
+      updateNote(idToUpdate, newTitle, newContent)
+        .then(() => {
+          console.log("Document updated!");
+          setTimeout(() => {
+            setShowToast(false);
+          }, 1000);
+        })
+        .catch((error) => {
+          //TODO remove for production
+          alert(
+            "An Error occurred saving the document. Please check console for details."
+          );
+          console.log(error);
+        });
+    }, delay * 1000);
 
-      return () => {
-        clearTimeout(timer1);
-      };
-    },
-    [content, titleContainer]
-  );
+    return () => {
+      clearTimeout(timer1);
+    };
+  }, [content, titleContainer]);
 
   const handleEditorChanges = (outputData: OutputData) =>
     setContent(outputData);
