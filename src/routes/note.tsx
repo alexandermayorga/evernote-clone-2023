@@ -2,6 +2,7 @@
 import {
   Form,
   Params,
+  useFetcher,
   useLoaderData,
   useNavigate,
 } from "react-router-dom";
@@ -43,6 +44,7 @@ export default function Note() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
+  const updateFetcher = useFetcher();
 
   const note = useLoaderData() as FBNote;
   const [content, setContent] = useState<OutputData>(
@@ -65,25 +67,25 @@ export default function Note() {
   const title = useRef(note.title || "Untitled");
   const handleTitleChange = (evt: ContentEditableEvent) => {
     const cleanTitle = stripHTMLFromString(evt.target.value);
+    // .keypress(function(e){ return e.which != 13; });
     title.current = cleanTitle;
     setTitleContainer(cleanTitle);
   };
   // const handleBlur = () => console.log(text.current);
-
-  //EditorJS Functionality
-  // const editorCore = useRef<EditorJS | null>(null);
-  // const handleInitialize = useCallback(
-  //   (instance: EditorJS) => (editorCore.current = instance),
-  //   []
-  // );
+  const handleTitleKeyDown = (evt: KeyboardEvent) => {
+    if (evt.key === "Enter") evt.preventDefault();
+  };
 
   const handleButtonSave = async () => {
     if (!user) return navigate("/login");
-    // if (!content) return console.log("Nothing new to save, Jinx!");
+    setShowToast(true);
 
     try {
       await updateNote(note.id, title.current, content);
       console.log("Document updated!");
+      setTimeout(() => {
+        setShowToast(false);
+      }, 1000);
     } catch (error) {
       //TODO remove for production
       alert(
@@ -93,38 +95,47 @@ export default function Note() {
     }
   };
 
-  const delay = 4;
-  useEffect(() => {
-    if (content == note.content && titleContainer == note.title) return;
+  // const delay = 4;
+  // useEffect(() => {
+  //   if (content == note.content && titleContainer == note.title) return;
 
-    // console.log(note.id, titleContainer, content);
-    const idToUpdate = note.id;
-    const newTitle = titleContainer;
-    const newContent = { ...content };
+  //   // console.log(note.id, titleContainer, content);
+  //   const idToUpdate = note.id;
+  //   const newTitle = titleContainer;
+  //   const newContent = { ...content };
 
-    const timer1 = setTimeout(() => {
-      console.log("Hi from timer");
-      setShowToast(true);
-      updateNote(idToUpdate, newTitle, newContent)
-        .then(() => {
-          console.log("Document updated!");
-          setTimeout(() => {
-            setShowToast(false);
-          }, 1000);
-        })
-        .catch((error) => {
-          //TODO remove for production
-          alert(
-            "An Error occurred saving the document. Please check console for details."
-          );
-          console.log(error);
-        });
-    }, delay * 1000);
+  //   updateFetcher.submit(
+  //     {
+  //       id: idToUpdate,
+  //       title: newTitle,
+  //       content: JSON.stringify(newContent),
+  //     },
+  //     { method: "post", action: `/dashboard/note/${idToUpdate}/update` }
+  //   );
 
-    return () => {
-      clearTimeout(timer1);
-    };
-  }, [content, titleContainer]);
+  //   const timer1 = setTimeout(() => {
+  //     console.log("Hi from timer");
+  //     setShowToast(true);
+  //     updateNote(idToUpdate, newTitle, newContent)
+  //       .then(() => {
+  //         console.log("Document updated!");
+  //         setTimeout(() => {
+  //           setShowToast(false);
+  //         }, 1000);
+  //       })
+  //       .catch((error) => {
+  //         //TODO remove for production
+  //         alert(
+  //           "An Error occurred saving the document. Please check console for details."
+  //         );
+  //         console.log(error);
+  //       });
+  //   }, delay * 1000);
+
+  //   return () => {
+  //     clearTimeout(timer1);
+  //   };
+  // }, [content, titleContainer]);
 
   const handleEditorChanges = (outputData: OutputData) =>
     setContent(outputData);
@@ -159,6 +170,7 @@ export default function Note() {
           // onBlur={handleBlur}
           onChange={handleTitleChange}
           className="h1 w-100 border-0 bg-transparent outline-focus-none p-0"
+          onKeyDown={handleTitleKeyDown}
         />
       </div>
       <hr />
