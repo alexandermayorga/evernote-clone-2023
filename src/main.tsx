@@ -4,7 +4,7 @@ import "./index.scss";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Root from "./routes/root";
-import { loader as sidebarLoader } from "./components/Sidebar";
+import { loader as dashboardLoader } from "./routes/dashboard";
 import Note, { loader as noteLoader } from "./routes/note";
 import ErrorPage from "./error-page";
 import Index from "./routes";
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
-        loader: sidebarLoader,
+        loader: dashboardLoader,
         action: dashboardAction,
         children: [
           {
@@ -51,17 +51,20 @@ const router = createBrowserRouter([
                 path: "note/:noteId",
                 element: <Note />,
                 loader: noteLoader,
-                // action: contactAction,
               },
               {
                 path: "note/:noteId/update",
                 action: updateAction,
-                errorElement: <div>Oops! There was an error Updating the document.</div>,
+                errorElement: (
+                  <div>Oops! There was an error Updating the document.</div>
+                ),
               },
               {
                 path: "note/:noteId/destroy",
                 action: destroyAction,
-                errorElement: <div>Oops! There was an error deleting the document.</div>,
+                errorElement: (
+                  <div>Oops! There was an error deleting the document.</div>
+                ),
               },
             ],
           },

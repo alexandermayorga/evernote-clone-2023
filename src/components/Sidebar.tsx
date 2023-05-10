@@ -2,20 +2,9 @@
 
 import { Form, NavLink } from "react-router-dom";
 import { FBNote } from "../notes.ts";
-import { getAllNotes } from "../firebase.ts";
 import NotePreview from "./NotePreview.tsx";
 
-export async function loader() {
-  const querySnapshot = await getAllNotes();
-  const notes: FBNote[] = [];
-  querySnapshot.forEach((doc) => {
-    const note = { id: doc.id, ...doc.data() };
-    notes.push(note as FBNote);
-  });
-  return notes;
-}
-
-export default function Sidebar({notes}: {notes: FBNote[]}) {
+export default function Sidebar({ notes }: { notes: FBNote[] }) {
   // console.log(notes);
 
   return (
