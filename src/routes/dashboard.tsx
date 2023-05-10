@@ -1,7 +1,7 @@
-import { Outlet, redirect } from "react-router-dom";
+import { Outlet, redirect, useLoaderData } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { useEffect } from "react";
-import { auth, createNote } from "../firebase";
+import { auth, createNote, getAllNotes } from "../firebase";
+import { FBNote } from "../notes";
 
 export async function action() {  
   //#TODO validate string instead of File
@@ -10,7 +10,19 @@ export async function action() {
   return redirect(`note/${docRef.id}`);
 }
 
+export async function loader() {
+  const querySnapshot = await getAllNotes();
+  const notes: FBNote[] = [];
+  querySnapshot.forEach((doc) => {
+    const note = { id: doc.id, ...doc.data() };
+    notes.push(note as FBNote);
+  });
+  return notes;
+}
+
 export default function Dashboard() {
+  const notes = useLoaderData() as FBNote[];
+
   return (
     <>
       <div className="main d-flex">
@@ -18,7 +30,7 @@ export default function Dashboard() {
           id="sidebar"
           className="scrollarea border-end border-3 flex-shrink-0"
         >
-          <Sidebar />
+          <Sidebar notes={notes}/>
         </div>
         <div id="page-content" className="flex-grow-1 p-4 scrollarea">
           <Outlet />

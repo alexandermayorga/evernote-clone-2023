@@ -1,9 +1,8 @@
 //TODO: need 2 states: 1) without any notes 2) with notes 3) need a button to create a new note
 
-import { Form, Link, NavLink, useLoaderData } from "react-router-dom";
+import { Form, NavLink } from "react-router-dom";
 import { FBNote } from "../notes.ts";
 import { getAllNotes } from "../firebase.ts";
-import { useAuth } from "../context/AuthContext.tsx";
 import NotePreview from "./NotePreview.tsx";
 
 export async function loader() {
@@ -16,9 +15,7 @@ export async function loader() {
   return notes;
 }
 
-export default function Sidebar() {
-  const { user } = useAuth();
-  const notes = useLoaderData() as FBNote[];
+export default function Sidebar({notes}: {notes: FBNote[]}) {
   // console.log(notes);
 
   return (
@@ -40,16 +37,14 @@ export default function Sidebar() {
       <div id="sidebar_content">
         <div className="list-group list-group-flush border-bottom scrollarea">
           <li className="list-group-item py-3">
-            {user && (
-              <Form method="post">
-                <button
-                  type="submit"
-                  className="btn btn-primary rounded-pill w-100 text-start mb-2 ps-4"
-                >
-                  <i className="bi bi-file-earmark-plus"></i> New
-                </button>
-              </Form>
-            )}
+            <Form method="post">
+              <button
+                type="submit"
+                className="btn btn-primary rounded-pill w-100 text-start mb-2 ps-4"
+              >
+                <i className="bi bi-file-earmark-plus"></i> New
+              </button>
+            </Form>
             <div className="input-group flex-nowrap ">
               <span
                 className="input-group-text rounded-pill-start border-end-0 bg-transparent"
