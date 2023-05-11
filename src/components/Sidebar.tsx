@@ -30,6 +30,8 @@ export default function Sidebar({ notes }: { notes: FBNote[] }) {
     // console.log(newSorting, "sortDesc:", sortDesc);
   };
 
+  //TODO: in the future, we expect user to have lots of notes. So instead we should hit the DB on search and sort. Sidebar in this scenario 
+  // will load a set of notes and the load more when user scrolls down
   useEffect(() => {
     setSortedNotes(sortNotes(filterNotes(notes, searchQuery)));
   }, [sorting, sortDesc, searchQuery]);

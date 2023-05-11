@@ -16,12 +16,12 @@ const BlockEditor = ({
   onChanges,
   initialData,
 }: PropTypes) => {
-  const ejInstance = useRef<EditorJS | null>();
+  const editorInstance = useRef<EditorJS | null>();
 
   const initEditor = () => {
     const editor = new EditorJS({
       onReady: () => {
-        ejInstance.current = editor;
+        editorInstance.current = editor;
         if(onInitialize) onInitialize(editor);
       },
       onChange: async (api: API, event: CustomEvent) => {
@@ -46,13 +46,13 @@ const BlockEditor = ({
   };
 
   useEffect(() => {
-    if (ejInstance.current === null) {
+    if (editorInstance.current === null) {
       initEditor();
     }
 
     return () => {
-      ejInstance.current?.destroy();
-      ejInstance.current = null;
+      editorInstance.current?.destroy();
+      editorInstance.current = null;
     };
   }, [note]);
 
