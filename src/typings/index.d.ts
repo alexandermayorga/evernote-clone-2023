@@ -11,3 +11,4 @@ declare module '@editorjs/delimiter';
 declare module '@editorjs/table';
 declare module '@editorjs/nested-list';
 declare module '@editorjs/underline';
+declare module "editorjs-html";

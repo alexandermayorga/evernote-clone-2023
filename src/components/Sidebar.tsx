@@ -11,8 +11,13 @@ import { matchSorter } from "match-sorter";
 type SortingType = "updated" | "title" | "created";
 type SortDescType = boolean;
 
-export default function Sidebar({ notes, editorLoading }: { notes: FBNote[], editorLoading: boolean }) {
-  // console.log(notes);
+export default function Sidebar({
+  notes,
+  editorLoading,
+}: {
+  notes: FBNote[];
+  editorLoading: boolean;
+}) {
   const [sorting, setSorting] = useState<SortingType>("updated");
   const [sortDesc, setSortDesc] = useState<SortDescType>(true);
   const [sortedNotes, setSortedNotes] = useState(notes);
@@ -30,7 +35,7 @@ export default function Sidebar({ notes, editorLoading }: { notes: FBNote[], edi
     // console.log(newSorting, "sortDesc:", sortDesc);
   };
 
-  //TODO: in the future, we expect user to have lots of notes. So instead we should hit the DB on search and sort. Sidebar in this scenario 
+  //TODO: in the future, we expect user to have lots of notes. So instead we should hit the DB on search and sort. Sidebar in this scenario
   // will load a set of notes and the load more when user scrolls down
   useEffect(() => {
     setSortedNotes(sortNotes(filterNotes(notes, searchQuery)));
@@ -81,7 +86,7 @@ export default function Sidebar({ notes, editorLoading }: { notes: FBNote[], edi
               <div className="input-group flex-nowrap me-2">
                 <span
                   className="input-group-text rounded-pill-start border-end-0 bg-transparent"
-                  id="addon-wrapping"
+                  id="addon-search"
                 >
                   <i className="bi bi-search"></i>
                 </span>
@@ -90,7 +95,7 @@ export default function Sidebar({ notes, editorLoading }: { notes: FBNote[], edi
                   className="form-control rounded-pill-end border-start-0"
                   placeholder="Search"
                   aria-label="Search"
-                  aria-describedby="addon-wrapping"
+                  aria-describedby="addon-search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -151,7 +156,9 @@ export default function Sidebar({ notes, editorLoading }: { notes: FBNote[], edi
             </div>
           </li>
           {sortedNotes.length ? (
-            sortedNotes.map((note) => <NotePreview note={note} key={note.id} disabled={editorLoading}/>)
+            sortedNotes.map((note) => (
+              <NotePreview note={note} key={note.id} disabled={editorLoading} />
+            ))
           ) : (
             <p className="text-muted">
               <i>No Notes</i>

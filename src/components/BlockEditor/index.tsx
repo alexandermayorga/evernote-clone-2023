@@ -5,24 +5,19 @@ import configuration, { DEFAULT_EDITORJS_DATA } from "./configuration";
 
 type PropTypes = {
   note: FBNote;
-  onInitialize?: (instance: EditorJS) => void;
+  onReady?: (instance: EditorJS) => void;
   onChanges: (content: OutputData) => void;
-  initialData?: OutputData | null;
+  data?: OutputData | null;
 };
 
-const BlockEditor = ({
-  note,
-  onInitialize,
-  onChanges,
-  initialData,
-}: PropTypes) => {
-  const editorInstance = useRef<EditorJS | null>();
+const BlockEditor = ({ note, onReady, onChanges, data }: PropTypes) => {
+  const editorRef = useRef<EditorJS | null>();
 
   const initEditor = () => {
     const editor = new EditorJS({
       onReady: () => {
-        editorInstance.current = editor;
-        if(onInitialize) onInitialize(editor);
+        editorRef.current = editor;
+        if (onReady) onReady(editor);
       },
       onChange: async (api: API, event: CustomEvent) => {
         let content;
@@ -39,20 +34,20 @@ const BlockEditor = ({
           }
         }
       },
-      data: initialData || DEFAULT_EDITORJS_DATA,
-      autofocus: initialData ? false : true,
+      data: data || DEFAULT_EDITORJS_DATA,
+      autofocus: data ? false : true,
       ...configuration,
     });
   };
 
   useEffect(() => {
-    if (editorInstance.current === null) {
+    if (editorRef.current === null) {
       initEditor();
     }
 
     return () => {
-      editorInstance.current?.destroy();
-      editorInstance.current = null;
+      editorRef.current?.destroy();
+      editorRef.current = null;
     };
   }, [note]);
 

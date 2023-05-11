@@ -53,6 +53,65 @@ html,
   }
 }
 
-#dropdown-sort-notes.dropdown-toggle::after{
-  content: none
+#dropdown-sort-notes.dropdown-toggle::after {
+  content: none;
 }
+
+// .line-clamp-2 {
+//   display: -webkit-box;
+//   -webkit-box-orient: vertical;
+//   overflow: hidden;
+//   -webkit-line-clamp: 2;
+//   &-sm {
+//     @media (min-width: 768px) {
+//       display: -webkit-box;
+//       -webkit-line-clamp: 2;
+//       -webkit-box-orient: vertical;
+//       overflow: hidden;
+//     }
+//   }
+// }
+
+@mixin line-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+$line-clamps: 4;
+
+@mixin line-clamp-x {
+  @for $i from 1 through $line-clamps {
+    .line-clamp- {
+      &#{$i} {
+        @include line-clamp;
+        -webkit-line-clamp: #{$i};
+      }
+      &sm- {
+        &#{$i} {
+          @include media-breakpoint-up(sm) {
+            @include line-clamp;
+            -webkit-line-clamp: #{$i};
+          }
+        }
+      }
+      &md- {
+        &#{$i} {
+          @include media-breakpoint-up(md) {
+            @include line-clamp;
+            -webkit-line-clamp: #{$i};
+          }
+        }
+      }
+      &lg- {
+        &#{$i} {
+          @include media-breakpoint-up(lg) {
+            @include line-clamp;
+            -webkit-line-clamp: #{$i};
+          }
+        }
+      }
+    }
+  }
+}
+@include line-clamp-x;

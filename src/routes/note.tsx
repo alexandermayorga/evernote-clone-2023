@@ -45,7 +45,7 @@ export default function Note() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
-  const {setEditorLoading} = useDashboard()
+  const { setEditorLoading } = useDashboard();
 
   const note = useLoaderData() as FBNote;
   const [content, setContent] = useState<OutputData>(
@@ -54,7 +54,7 @@ export default function Note() {
   const [title, setTitle] = useState<string>(note.title);
 
   useEffect(() => {
-    setEditorLoading(true)
+    setEditorLoading(true);
     document.title = `${note.title} | Mammoth Notes`;
 
     setTitle(note.title);
@@ -77,7 +77,7 @@ export default function Note() {
   const handleButtonSave = async () => {
     if (!user) return navigate("/login");
     if (content.blocks == note.content.blocks && title == note.title) return;
-    
+
     setShowToast(true);
     try {
       await updateNote(note.id, titleRef.current, content);
@@ -180,15 +180,15 @@ export default function Note() {
           onChange={handleTitleChange}
           className="h1 w-100 border-0 bg-transparent outline-focus-none p-0"
           // onKeyDown={handleTitleKeyDown}
-          tagName='h1'
+          tagName="h1"
         />
       </div>
       <hr />
       <BlockEditor
         note={note}
-        onInitialize={(editorInstance) => setEditorLoading(false)}
+        onReady={(editorInstance) => setEditorLoading(false)}
         onChanges={handleEditorChanges}
-        initialData={note.content}
+        data={note.content}
       />
       <ToastContainer position={"bottom-end"} className="p-3">
         <Toast
