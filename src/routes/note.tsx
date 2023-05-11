@@ -17,6 +17,7 @@ import { DEFAULT_EDITORJS_DATA } from "../components/BlockEditor/configuration.t
 import { Toast, ToastContainer } from "react-bootstrap";
 import { stripHTMLFromString } from "../utils.ts";
 import { useDashboard } from "./dashboard.tsx";
+import format from "date-fns/format";
 
 export async function loader({ params }: { params: Params }) {
   if (!params.noteId) return null;
@@ -147,7 +148,7 @@ export default function Note() {
       <div id="notes_header">
         <div id="buttons" className="w-100 d-flex justify-content-between mb-2">
           <div className="text-muted">
-            created on: {typeof note.created === "number" && note.created}
+            created on: {typeof note.created === "number" && format(new Date(note.created), 'MMM dd, yyyy')}
           </div>
           <div>
             <button

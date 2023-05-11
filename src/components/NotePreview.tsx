@@ -1,6 +1,9 @@
 import { NavLink } from "react-router-dom";
 import { FBNote } from "../notes";
 import { convertOutputDataToText } from "../utils";
+import differenceInDays from "date-fns/differenceInDays";
+import formatDistanceToNowStrict from "date-fns/formatDistanceToNowStrict";
+import format from "date-fns/format";
 
 export default function NotePreview({
   note,
@@ -16,7 +19,12 @@ export default function NotePreview({
   // console.log(note);
 
   const totimeString = new Date(note.updated.toDate());
-  const textDelimeter = 75;
+  const days = differenceInDays(totimeString, Date.now());
+  const result = formatDistanceToNowStrict(new Date(totimeString), {
+    addSuffix: true,
+  });
+  const result2 = format(new Date(totimeString), 'MMM dd, yyyy')
+
 
   return (
     <NavLink
@@ -30,15 +38,15 @@ export default function NotePreview({
           <div className="d-flex w-100">
             <strong className="mb-1 line-clamp-2">{title}</strong>
           </div>
-          <div className={`col-10 mb-1 small line-clamp-2 ${!isActive ? "text-muted" : ""}`}>
+          <div
+            className={`col-10 mb-2 small line-clamp-2 ${
+              !isActive ? "text-muted" : ""
+            }`}
+          >
             {convertOutputDataToText(content)}
           </div>
-          <div className={`col-10 mb-1 small ${!isActive ? "text-muted" : ""}`}>
-            {totimeString.toLocaleDateString("en-us", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
+          <div className={`col-10 small ${!isActive ? "text-muted" : ""}`}>
+            {days >= 0 ? result : result2}
           </div>
         </span>
       )}
