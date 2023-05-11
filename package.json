@@ -21,6 +21,7 @@
     "bootstrap-icons": "^1.10.4",
     "date-fns": "^2.30.0",
     "firebase": "^9.20.0",
+    "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-contenteditable": "^3.3.7",

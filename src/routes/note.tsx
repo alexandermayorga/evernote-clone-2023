@@ -143,27 +143,34 @@ export default function Note() {
   return (
     <div id="note_wrapper">
       <div id="notes_header">
-        <div id="buttons" className="w-100 d-flex justify-content-end mb-2">
-          <button
-            className="btn btn-success btn-sm me-2"
-            type="button"
-            onClick={handleButtonSave}
-          >
-            <i className="bi bi-database"></i> Update
-          </button>
-          <Form
-            method="post"
-            action="destroy"
-            onSubmit={(event) => {
-              if (!confirm("Please confirm you want to delete this document."))
-                event.preventDefault();
-            }}
-            className="d-inline"
-          >
-            <button type="submit" className="btn btn-danger btn-sm">
-              <i className="bi bi-trash"></i> Delete
+        <div id="buttons" className="w-100 d-flex justify-content-between mb-2">
+          <div className="text-muted">
+            created on: {typeof note.created === "number" && note.created}
+          </div>
+          <div>
+            <button
+              className="btn btn-success btn-sm me-2"
+              type="button"
+              onClick={handleButtonSave}
+            >
+              <i className="bi bi-database"></i> Update
             </button>
-          </Form>
+            <Form
+              method="post"
+              action="destroy"
+              onSubmit={(event) => {
+                if (
+                  !confirm("Please confirm you want to delete this document.")
+                )
+                  event.preventDefault();
+              }}
+              className="d-inline"
+            >
+              <button type="submit" className="btn btn-danger btn-sm">
+                <i className="bi bi-trash"></i> Delete
+              </button>
+            </Form>
+          </div>
         </div>
         <ContentEditable
           html={title.current}

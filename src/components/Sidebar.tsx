@@ -6,7 +6,7 @@ import NotePreview from "./NotePreview.tsx";
 import { useEffect, useState } from "react";
 import Dropdown from "react-bootstrap/esm/Dropdown";
 import sortBy from "sort-by";
-// const yourModuleName = require('module-name');
+import { matchSorter } from "match-sorter";
 
 type SortingType = "updated" | "title" | "created";
 type SortDescType = boolean;
@@ -16,8 +16,9 @@ export default function Sidebar({ notes }: { notes: FBNote[] }) {
   const [sorting, setSorting] = useState<SortingType>("updated");
   const [sortDesc, setSortDesc] = useState<SortDescType>(true);
   const [sortedNotes, setSortedNotes] = useState(notes);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const sortNotes = (newSorting: SortingType) => {
+  const handleSortNotes = (newSorting: SortingType) => {
     //Is the user toggling?
     if (sorting === newSorting) return setSortDesc(!sortDesc);
 
@@ -26,21 +27,26 @@ export default function Sidebar({ notes }: { notes: FBNote[] }) {
     if (newSorting == "title") setSortDesc(false);
     if (newSorting == "created") setSortDesc(true);
     if (newSorting == "updated") setSortDesc(true);
-    console.log(newSorting, "sortDesc:", sortDesc);
+    // console.log(newSorting, "sortDesc:", sortDesc);
   };
 
   useEffect(() => {
+    setSortedNotes(sortNotes(filterNotes(notes, searchQuery)));
+  }, [sorting, sortDesc, searchQuery]);
+
+  function sortNotes(notes: FBNote[]): FBNote[] {
     const newSortedNotes = [...notes];
+    const sortQuery = sortDesc ? `-${sorting}` : sorting;
+    return newSortedNotes.sort(sortBy(sortQuery));
+  }
 
-    if (!sortDesc) {
-      console.log("Pit 1");
-      setSortedNotes(newSortedNotes.sort(sortBy(sorting)));
-    }
-
-    if (sortDesc) {
-      setSortedNotes(newSortedNotes.sort(sortBy(`-${sorting}`)));
-    }
-  }, [sorting, sortDesc]);
+  function filterNotes(notes: FBNote[], query: string) {
+    const filteredNotes = matchSorter(notes, query, {
+      keys: ["title", "content.blocks.*.data.text"],
+      threshold: matchSorter.rankings.CONTAINS,
+    });
+    return filteredNotes;
+  }
 
   return (
     <>
@@ -83,6 +89,8 @@ export default function Sidebar({ notes }: { notes: FBNote[] }) {
                   placeholder="Search"
                   aria-label="Search"
                   aria-describedby="addon-wrapping"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <Dropdown className="d-inline-block">
@@ -91,46 +99,46 @@ export default function Sidebar({ notes }: { notes: FBNote[] }) {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Header>SORT BY</Dropdown.Header>
-                  <Dropdown.Item onClick={() => sortNotes("title")}>
+                  <Dropdown.Item onClick={() => handleSortNotes("title")}>
                     <span className={sorting !== "title" ? "invisible" : ""}>
-                      <i
-                        className={`bi bi-arrow-down ${
-                          sortDesc ? "text-primary" : "text-muted"
-                        }`}
-                      ></i>
                       <i
                         className={`bi bi-arrow-up ${
                           sortDesc ? "text-muted" : "text-primary"
+                        }`}
+                      ></i>
+                      <i
+                        className={`bi bi-arrow-down ${
+                          sortDesc ? "text-primary" : "text-muted"
                         }`}
                       ></i>
                     </span>{" "}
                     Title
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={() => sortNotes("updated")}>
+                  <Dropdown.Item onClick={() => handleSortNotes("updated")}>
                     <span className={sorting !== "updated" ? "invisible" : ""}>
-                      <i
-                        className={`bi bi-arrow-down ${
-                          sortDesc ? "text-primary" : "text-muted"
-                        }`}
-                      ></i>
                       <i
                         className={`bi bi-arrow-up ${
                           sortDesc ? "text-muted" : "text-primary"
+                        }`}
+                      ></i>
+                      <i
+                        className={`bi bi-arrow-down ${
+                          sortDesc ? "text-primary" : "text-muted"
                         }`}
                       ></i>
                     </span>{" "}
                     Date Updated
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={() => sortNotes("created")}>
+                  <Dropdown.Item onClick={() => handleSortNotes("created")}>
                     <span className={sorting !== "created" ? "invisible" : ""}>
-                      <i
-                        className={`bi bi-arrow-down ${
-                          sortDesc ? "text-primary" : "text-muted"
-                        }`}
-                      ></i>
                       <i
                         className={`bi bi-arrow-up ${
                           sortDesc ? "text-muted" : "text-primary"
+                        }`}
+                      ></i>
+                      <i
+                        className={`bi bi-arrow-down ${
+                          sortDesc ? "text-primary" : "text-muted"
                         }`}
                       ></i>
                     </span>{" "}
