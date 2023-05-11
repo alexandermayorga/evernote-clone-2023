@@ -1,7 +1,13 @@
-import { Outlet, redirect, useLoaderData } from "react-router-dom";
+import {
+  Outlet,
+  redirect,
+  useLoaderData,
+  useOutletContext,
+} from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { auth, createNote, getAllNotes } from "../firebase";
 import { FBNote } from "../notes";
+import { useState } from "react";
 
 export async function loader() {
   const querySnapshot = await getAllNotes();
@@ -19,8 +25,19 @@ export async function action() {
   return redirect(`note/${docRef.id}`);
 }
 
+type DashboardContextType = {
+  editorLoading: boolean;
+  setEditorLoading: (val: boolean) => void;
+};
+
 export default function Dashboard() {
   const notes = useLoaderData() as FBNote[];
+  const [editorLoading, setEditorLoading] = useState<boolean>(false);
+
+  const contextValue = {
+    editorLoading,
+    setEditorLoading,
+  };
 
   return (
     <>
@@ -29,12 +46,16 @@ export default function Dashboard() {
           id="sidebar"
           className="scrollarea border-end border-3 flex-shrink-0"
         >
-          <Sidebar notes={notes} />
+          <Sidebar notes={notes} editorLoading={editorLoading} />
         </div>
         <div id="page-content" className="flex-grow-1 p-4 scrollarea">
-          <Outlet />
+          <Outlet context={contextValue} />
         </div>
       </div>
     </>
   );
+}
+
+export function useDashboard() {
+  return useOutletContext<DashboardContextType>();
 }

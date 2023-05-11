@@ -16,6 +16,7 @@ import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { DEFAULT_EDITORJS_DATA } from "../components/BlockEditor/configuration.ts";
 import { Toast, ToastContainer } from "react-bootstrap";
 import { stripHTMLFromString } from "../utils.ts";
+import { useDashboard } from "./dashboard.tsx";
 
 export async function loader({ params }: { params: Params }) {
   if (!params.noteId) return null;
@@ -44,6 +45,7 @@ export default function Note() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
+  const {setEditorLoading} = useDashboard()
 
   const note = useLoaderData() as FBNote;
   const [content, setContent] = useState<OutputData>(
@@ -52,6 +54,7 @@ export default function Note() {
   const [title, setTitle] = useState<string>(note.title);
 
   useEffect(() => {
+    setEditorLoading(true)
     document.title = `${note.title} | Mammoth Notes`;
 
     setTitle(note.title);
@@ -183,7 +186,7 @@ export default function Note() {
       <hr />
       <BlockEditor
         note={note}
-        // onInitialize={handleInitialize}
+        onInitialize={(editorInstance) => setEditorLoading(false)}
         onChanges={handleEditorChanges}
         initialData={note.content}
       />

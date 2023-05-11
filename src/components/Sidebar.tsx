@@ -11,7 +11,7 @@ import { matchSorter } from "match-sorter";
 type SortingType = "updated" | "title" | "created";
 type SortDescType = boolean;
 
-export default function Sidebar({ notes }: { notes: FBNote[] }) {
+export default function Sidebar({ notes, editorLoading }: { notes: FBNote[], editorLoading: boolean }) {
   // console.log(notes);
   const [sorting, setSorting] = useState<SortingType>("updated");
   const [sortDesc, setSortDesc] = useState<SortDescType>(true);
@@ -151,7 +151,7 @@ export default function Sidebar({ notes }: { notes: FBNote[] }) {
             </div>
           </li>
           {sortedNotes.length ? (
-            sortedNotes.map((note) => <NotePreview note={note} key={note.id} />)
+            sortedNotes.map((note) => <NotePreview note={note} key={note.id} disabled={editorLoading}/>)
           ) : (
             <p className="text-muted">
               <i>No Notes</i>

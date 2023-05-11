@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { FBNote } from "../notes";
 
-export default function NotePreview({ note }: { note: FBNote }) {
+export default function NotePreview({ note, disabled }: { note: FBNote, disabled:boolean }) {
     // const newContent =
     //   content.length > 85 ? `${content.substring(0, 85)}...` : content;
     const { id, title, content, updated } = note;
@@ -12,7 +12,7 @@ export default function NotePreview({ note }: { note: FBNote }) {
     return (
       <NavLink
         to={`note/${id}`}
-        className="list-group-item list-group-item-action py-3 lh-sm"
+        className={`list-group-item list-group-item-action py-3 lh-sm ${disabled && 'disabled'}`}
       >
         {({ isActive, isPending }) => (
           <span className={isActive ? "active" : ""}>
