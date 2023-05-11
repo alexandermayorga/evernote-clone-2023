@@ -1,6 +1,8 @@
 @import "bootstrap";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
+// $enable-negative-margins: true;
+
 body,
 html {
   background-color: #f8f8f8;
@@ -49,4 +51,8 @@ html,
     border-top-right-radius: var(--bs-border-radius-pill) !important;
     border-bottom-right-radius: var(--bs-border-radius-pill) !important;
   }
+}
+
+#dropdown-sort-notes.dropdown-toggle::after{
+  content: none
 }

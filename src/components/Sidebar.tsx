@@ -3,9 +3,44 @@
 import { Form, NavLink } from "react-router-dom";
 import { FBNote } from "../notes.ts";
 import NotePreview from "./NotePreview.tsx";
+import { useEffect, useState } from "react";
+import Dropdown from "react-bootstrap/esm/Dropdown";
+import sortBy from "sort-by";
+// const yourModuleName = require('module-name');
+
+type SortingType = "updated" | "title" | "created";
+type SortDescType = boolean;
 
 export default function Sidebar({ notes }: { notes: FBNote[] }) {
   // console.log(notes);
+  const [sorting, setSorting] = useState<SortingType>("updated");
+  const [sortDesc, setSortDesc] = useState<SortDescType>(true);
+  const [sortedNotes, setSortedNotes] = useState(notes);
+
+  const sortNotes = (newSorting: SortingType) => {
+    //Is the user toggling?
+    if (sorting === newSorting) return setSortDesc(!sortDesc);
+
+    //User is changing Sort by type
+    setSorting(newSorting);
+    if (newSorting == "title") setSortDesc(false);
+    if (newSorting == "created") setSortDesc(true);
+    if (newSorting == "updated") setSortDesc(true);
+    console.log(newSorting, "sortDesc:", sortDesc);
+  };
+
+  useEffect(() => {
+    const newSortedNotes = [...notes];
+
+    if (!sortDesc) {
+      console.log("Pit 1");
+      setSortedNotes(newSortedNotes.sort(sortBy(sorting)));
+    }
+
+    if (sortDesc) {
+      setSortedNotes(newSortedNotes.sort(sortBy(`-${sorting}`)));
+    }
+  }, [sorting, sortDesc]);
 
   return (
     <>
@@ -34,24 +69,79 @@ export default function Sidebar({ notes }: { notes: FBNote[] }) {
                 <i className="bi bi-file-earmark-plus"></i> New
               </button>
             </Form>
-            <div className="input-group flex-nowrap ">
-              <span
-                className="input-group-text rounded-pill-start border-end-0 bg-transparent"
-                id="addon-wrapping"
-              >
-                <i className="bi bi-search"></i>
-              </span>
-              <input
-                type="search"
-                className="form-control rounded-pill-end border-start-0"
-                placeholder="Search"
-                aria-label="Search"
-                aria-describedby="addon-wrapping"
-              />
+            <div className="d-flex">
+              <div className="input-group flex-nowrap me-2">
+                <span
+                  className="input-group-text rounded-pill-start border-end-0 bg-transparent"
+                  id="addon-wrapping"
+                >
+                  <i className="bi bi-search"></i>
+                </span>
+                <input
+                  type="search"
+                  className="form-control rounded-pill-end border-start-0"
+                  placeholder="Search"
+                  aria-label="Search"
+                  aria-describedby="addon-wrapping"
+                />
+              </div>
+              <Dropdown className="d-inline-block">
+                <Dropdown.Toggle variant="primary" id="dropdown-sort-notes">
+                  <i className="bi bi-sort-down-alt"></i>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Header>SORT BY</Dropdown.Header>
+                  <Dropdown.Item onClick={() => sortNotes("title")}>
+                    <span className={sorting !== "title" ? "invisible" : ""}>
+                      <i
+                        className={`bi bi-arrow-down ${
+                          sortDesc ? "text-primary" : "text-muted"
+                        }`}
+                      ></i>
+                      <i
+                        className={`bi bi-arrow-up ${
+                          sortDesc ? "text-muted" : "text-primary"
+                        }`}
+                      ></i>
+                    </span>{" "}
+                    Title
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => sortNotes("updated")}>
+                    <span className={sorting !== "updated" ? "invisible" : ""}>
+                      <i
+                        className={`bi bi-arrow-down ${
+                          sortDesc ? "text-primary" : "text-muted"
+                        }`}
+                      ></i>
+                      <i
+                        className={`bi bi-arrow-up ${
+                          sortDesc ? "text-muted" : "text-primary"
+                        }`}
+                      ></i>
+                    </span>{" "}
+                    Date Updated
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => sortNotes("created")}>
+                    <span className={sorting !== "created" ? "invisible" : ""}>
+                      <i
+                        className={`bi bi-arrow-down ${
+                          sortDesc ? "text-primary" : "text-muted"
+                        }`}
+                      ></i>
+                      <i
+                        className={`bi bi-arrow-up ${
+                          sortDesc ? "text-muted" : "text-primary"
+                        }`}
+                      ></i>
+                    </span>{" "}
+                    Date Created
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
           </li>
-          {notes.length ? (
-            notes.map((note) => <NotePreview note={note} key={note.id} />)
+          {sortedNotes.length ? (
+            sortedNotes.map((note) => <NotePreview note={note} key={note.id} />)
           ) : (
             <p className="text-muted">
               <i>No Notes</i>
