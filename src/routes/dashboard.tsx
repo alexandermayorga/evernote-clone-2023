@@ -28,15 +28,20 @@ export async function action() {
 type DashboardContextType = {
   editorLoading: boolean;
   setEditorLoading: (val: boolean) => void;
+  updatedNotes: FBNote[]
+  setUpdatedNotes: (notes:FBNote[]) => void
 };
 
 export default function Dashboard() {
   const notes = useLoaderData() as FBNote[];
   const [editorLoading, setEditorLoading] = useState<boolean>(false);
+  const [updatedNotes, setUpdatedNotes] = useState<FBNote[]>(notes);
 
   const contextValue = {
     editorLoading,
     setEditorLoading,
+    updatedNotes,
+    setUpdatedNotes,
   };
 
   return (
@@ -46,7 +51,7 @@ export default function Dashboard() {
           id="sidebar"
           className="scrollarea border-end border-3 flex-shrink-0"
         >
-          <Sidebar notes={notes} editorLoading={editorLoading} />
+          <Sidebar notes={updatedNotes} editorLoading={editorLoading} />
         </div>
         <div id="page-content" className="flex-grow-1 p-4 scrollarea">
           <Outlet context={contextValue} />

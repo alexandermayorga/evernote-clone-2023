@@ -23,30 +23,24 @@ export async function loader({ params }: { params: Params }) {
   if (!params.noteId) return null;
   const docSnap = await getNote(params.noteId as string);
 
-  let note: FBNote;
+  
 
-  if (docSnap.exists()) {
-    note = { id: docSnap.id, ...docSnap.data() } as FBNote;
-    return note;
+  if (!docSnap.exists()) {
+    throw new Response("", {
+      status: 404,
+      statusText: "No Note found with that ID",
+    });
   }
-
-  return null;
-
-  // const note = notes.find((note) => note.id == parseInt(params.noteId || ""));
-  // if (!note) {
-  //   throw new Response("", {
-  //     status: 404,
-  //     statusText: "Not Found",
-  //   });
-  // }
-  // return note;
+  const note: FBNote = { id: docSnap.id, ...docSnap.data() } as FBNote;
+  
+  return note;
 }
 
 export default function Note() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
-  const { setEditorLoading } = useDashboard();
+  const { setEditorLoading, updatedNotes, setUpdatedNotes } = useDashboard();
 
   const note = useLoaderData() as FBNote;
   const [content, setContent] = useState<OutputData>(
@@ -77,12 +71,26 @@ export default function Note() {
 
   const handleButtonSave = async () => {
     if (!user) return navigate("/login");
-    if (content.blocks == note.content.blocks && title == note.title) return;
+    if (content.blocks == note.content.blocks && title == note.title) {
+      console.log("Either the content or the title are the same");
+      return;
+    }
 
     setShowToast(true);
     try {
       await updateNote(note.id, titleRef.current, content);
-      console.log("Document updated!");
+      // console.log("Document updated!");
+      //Update the Sidebar with new content
+
+      const notesForSideBar = [...updatedNotes];
+
+      const foundIndex = notesForSideBar.findIndex(
+        (prevNote) => prevNote.id == note.id
+      );
+      notesForSideBar[foundIndex].title = titleRef.current;
+      notesForSideBar[foundIndex].content = content;
+      setUpdatedNotes(notesForSideBar);
+
       setTimeout(() => {
         setShowToast(false);
       }, 1000);
@@ -148,7 +156,9 @@ export default function Note() {
       <div id="notes_header">
         <div id="buttons" className="w-100 d-flex justify-content-between mb-2">
           <div className="text-muted">
-            created on: {typeof note.created === "number" && format(new Date(note.created), 'MMM dd, yyyy')}
+            created on:{" "}
+            {typeof note.created === "number" &&
+              format(new Date(note.created), "MMM dd, yyyy")}
           </div>
           <div>
             <button
