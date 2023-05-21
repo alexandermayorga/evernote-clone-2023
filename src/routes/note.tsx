@@ -7,7 +7,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { FBNote } from "../notes.ts";
+import { FBNote, NoteType } from "../notes.ts";
 import { OutputData } from "@editorjs/editorjs";
 import { useAuth } from "../context/AuthContext.tsx";
 import { getNote, updateNote } from "../firebase.ts";
@@ -15,15 +15,13 @@ import BlockEditor from "../components/BlockEditor";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { DEFAULT_EDITORJS_DATA } from "../components/BlockEditor/configuration.ts";
 import { Toast, ToastContainer } from "react-bootstrap";
-import { stripHTMLFromString } from "../utils.ts";
+import { convertToNoteType, stripHTMLFromString } from "../utils.ts";
 import { useDashboard } from "./dashboard.tsx";
 import format from "date-fns/format";
 
 export async function loader({ params }: { params: Params }) {
   if (!params.noteId) return null;
   const docSnap = await getNote(params.noteId as string);
-
-  
 
   if (!docSnap.exists()) {
     throw new Response("", {
@@ -32,17 +30,20 @@ export async function loader({ params }: { params: Params }) {
     });
   }
   const note: FBNote = { id: docSnap.id, ...docSnap.data() } as FBNote;
-  
-  return note;
+  //TODO: update after fix for nested objects issue
+  const parsedNote: NoteType = convertToNoteType(note);
+
+  return parsedNote;
 }
 
-export default function Note() {
+export default function NoteEditor() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
   const { setEditorLoading, updatedNotes, setUpdatedNotes } = useDashboard();
 
-  const note = useLoaderData() as FBNote;
+  const note = useLoaderData() as NoteType;
+
   const [content, setContent] = useState<OutputData>(
     note.content || DEFAULT_EDITORJS_DATA
   );
@@ -77,8 +78,11 @@ export default function Note() {
     }
 
     setShowToast(true);
+
+    const contentJSON = JSON.stringify(content);
+
     try {
-      await updateNote(note.id, titleRef.current, content);
+      await updateNote(note.id, titleRef.current, contentJSON);
       // console.log("Document updated!");
       //Update the Sidebar with new content
 

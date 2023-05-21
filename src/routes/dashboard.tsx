@@ -6,8 +6,9 @@ import {
 } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { auth, createNote, getAllNotes } from "../firebase";
-import { FBNote } from "../notes";
+import { FBNote, NoteType } from "../notes";
 import { useState } from "react";
+import { convertToNoteType } from "../utils";
 
 export async function loader() {
   const querySnapshot = await getAllNotes();
@@ -16,7 +17,11 @@ export async function loader() {
     const note = { id: doc.id, ...doc.data() };
     notes.push(note as FBNote);
   });
-  return notes;
+  const parsedNotes: NoteType[] = notes.map((note) => {
+    //TODO remove this after fixing issue with FB not saving nested objects
+    return convertToNoteType(note)
+  });
+  return parsedNotes;
 }
 
 export async function action() {
@@ -28,8 +33,8 @@ export async function action() {
 type DashboardContextType = {
   editorLoading: boolean;
   setEditorLoading: (val: boolean) => void;
-  updatedNotes: FBNote[]
-  setUpdatedNotes: (notes:FBNote[]) => void
+  updatedNotes: NoteType[];
+  setUpdatedNotes: (notes: NoteType[]) => void;
 };
 
 export default function Dashboard() {

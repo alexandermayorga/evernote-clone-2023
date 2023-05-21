@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FBNote } from "../notes";
+import { NoteType } from "../notes";
 import { convertOutputDataToText } from "../utils";
 import differenceInDays from "date-fns/differenceInDays";
 import formatDistanceToNowStrict from "date-fns/formatDistanceToNowStrict";
@@ -9,7 +9,7 @@ export default function NotePreview({
   note,
   disabled,
 }: {
-  note: FBNote;
+  note: NoteType;
   disabled: boolean;
 }) {
   // const newContent =
@@ -23,8 +23,7 @@ export default function NotePreview({
   const result = formatDistanceToNowStrict(new Date(totimeString), {
     addSuffix: true,
   });
-  const result2 = format(new Date(totimeString), 'MMM dd, yyyy')
-
+  const result2 = format(new Date(totimeString), "MMM dd, yyyy");
 
   return (
     <NavLink
@@ -43,6 +42,7 @@ export default function NotePreview({
               !isActive ? "text-muted" : ""
             }`}
           >
+            {/* //TODO remove this after fix - nested objects */}
             {convertOutputDataToText(content)}
           </div>
           <div className={`col-10 small ${!isActive ? "text-muted" : ""}`}>

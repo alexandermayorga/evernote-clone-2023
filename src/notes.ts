@@ -1,16 +1,19 @@
 import { OutputData } from "@editorjs/editorjs";
 import { Timestamp } from "firebase/firestore";
 
-export type Note = {
-  id: number;
+export type NoteType = {
+  id: string;
   title: string;
-  content: string;
+  content: OutputData;
+  author: string;
+  created: number;
+  updated: Timestamp;
 };
 
 export type FBNote = {
   id: string;
   title: string;
-  content: OutputData;
+  content: string;
   author: string;
   created: number;
   updated: Timestamp;

@@ -19,7 +19,6 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { OutputData } from "@editorjs/editorjs";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -49,10 +48,10 @@ const COLLECTION_NOTES = "notes";
  * Saves a New Document to DB
  * @param id Note Id in Firebase
  * @param title Note Title
- * @param content Editor JS Output Data
+ * @param content Editor JS Output Data as JSON string
  * @returns Promise with either the DocRef or an error
  */
-export function updateNote(id: string, title: string, content: OutputData) : Promise<void>{
+export function updateNote(id: string, title: string, content: string) : Promise<void>{
   return updateDoc(doc(db, COLLECTION_NOTES, id), {
     title,
     content,
