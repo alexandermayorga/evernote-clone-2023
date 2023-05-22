@@ -14,9 +14,11 @@ type SortDescType = boolean;
 export default function Sidebar({
   notes,
   editorLoading,
+  toggleSidebar,
 }: {
   notes: FBNote[];
   editorLoading: boolean;
+  toggleSidebar: (val: boolean) => void;
 }) {
   const [sorting, setSorting] = useState<SortingType>("updated");
   const [sortDesc, setSortDesc] = useState<SortDescType>(true);
@@ -57,10 +59,13 @@ export default function Sidebar({
 
   return (
     <>
-      <div id="sidebar_header">
+      <div
+        id="sidebar_header"
+        className="d-flex justify-content-between border-bottom"
+      >
         <NavLink
           to={""}
-          className="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom"
+          className="d-flex align-items-center p-3 link-dark text-decoration-none"
         >
           <img
             src="/logo192.png"
@@ -70,6 +75,11 @@ export default function Sidebar({
           />
           <span className="fs-3 fw-semibold lh-1">Notes List</span>
         </NavLink>
+        <div className="align-self-center me-3 d-md-none">
+          <button type="button" className="btn btn-secondary btn-sm" onClick={()=>toggleSidebar(false)}>
+            <i className="bi bi-caret-left-fill"></i> Hide Sidebar
+          </button>
+        </div>
       </div>
       <div id="sidebar_content">
         <div className="list-group list-group-flush border-bottom scrollarea">

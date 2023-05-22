@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import EditorJS, { API, OutputData } from "@editorjs/editorjs";
-import { FBNote } from "../../notes";
+import { NoteType } from "../../notes";
 import configuration, { DEFAULT_EDITORJS_DATA } from "./configuration";
 
 type PropTypes = {
-  note: FBNote;
+  note: NoteType;
   onReady?: (instance: EditorJS) => void;
   onChanges: (content: OutputData) => void;
   data?: OutputData | null;

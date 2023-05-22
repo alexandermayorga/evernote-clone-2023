@@ -40,7 +40,7 @@ export default function NoteEditor() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
-  const { setEditorLoading, updatedNotes, setUpdatedNotes } = useDashboard();
+  const { setEditorLoading, updatedNotes, setUpdatedNotes, setIsSidebarOpen } = useDashboard();
 
   const note = useLoaderData() as NoteType;
 
@@ -56,6 +56,7 @@ export default function NoteEditor() {
     setTitle(note.title);
     titleRef.current = note.title;
     setContent(note.content || DEFAULT_EDITORJS_DATA);
+    setIsSidebarOpen(false)
   }, [note]);
 
   //This is for the Title
@@ -77,8 +78,11 @@ export default function NoteEditor() {
       return;
     }
 
+    console.log(content);
+    
+    return
     setShowToast(true);
-
+    
     const contentJSON = JSON.stringify(content);
 
     try {
@@ -156,8 +160,18 @@ export default function NoteEditor() {
     setContent(outputData);
 
   return (
-    <div id="note_wrapper">
+    <div id="note_wrapper" className="p-4">
       <div id="notes_header">
+        <div className="mb-3 d-md-none text-end">
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            aria-label="Close Sidebar"
+            onClick={()=> setIsSidebarOpen(true)}
+          >
+            <i className="bi bi-caret-right-fill"></i> View All Notes
+          </button>
+        </div>
         <div id="buttons" className="w-100 d-flex justify-content-between mb-2">
           <div className="text-muted">
             created on:{" "}

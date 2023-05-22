@@ -19,7 +19,7 @@ export async function loader() {
   });
   const parsedNotes: NoteType[] = notes.map((note) => {
     //TODO remove this after fixing issue with FB not saving nested objects
-    return convertToNoteType(note)
+    return convertToNoteType(note);
   });
   return parsedNotes;
 }
@@ -35,18 +35,23 @@ type DashboardContextType = {
   setEditorLoading: (val: boolean) => void;
   updatedNotes: NoteType[];
   setUpdatedNotes: (notes: NoteType[]) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (val: boolean) => void;
 };
 
 export default function Dashboard() {
   const notes = useLoaderData() as FBNote[];
   const [editorLoading, setEditorLoading] = useState<boolean>(false);
   const [updatedNotes, setUpdatedNotes] = useState<FBNote[]>(notes);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const contextValue = {
     editorLoading,
     setEditorLoading,
     updatedNotes,
     setUpdatedNotes,
+    isSidebarOpen,
+    setIsSidebarOpen,
   };
 
   return (
@@ -54,11 +59,13 @@ export default function Dashboard() {
       <div className="main d-flex">
         <div
           id="sidebar"
-          className="scrollarea border-end border-3 flex-shrink-0"
+          className={`overflow-x-hidden scrollarea border-end border-3 ${isSidebarOpen ? "open":""}`}
         >
-          <Sidebar notes={updatedNotes} editorLoading={editorLoading} />
+          <div id="sidebar_wrapper">
+            <Sidebar notes={updatedNotes} editorLoading={editorLoading} toggleSidebar={setIsSidebarOpen}/>
+          </div>
         </div>
-        <div id="page-content" className="flex-grow-1 p-4 scrollarea">
+        <div id="page-content" className="overflow-x-hidden scrollarea">
           <Outlet context={contextValue} />
         </div>
       </div>
