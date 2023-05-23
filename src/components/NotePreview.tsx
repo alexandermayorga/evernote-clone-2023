@@ -18,7 +18,7 @@ export default function NotePreview({
   // console.log(note.updated.toDate());
   // console.log(note);
 
-  const totimeString = new Date(note.updated.toDate());
+  const totimeString = new Date(updated.toDate());
   const days = differenceInDays(totimeString, Date.now());
   const result = formatDistanceToNowStrict(new Date(totimeString), {
     addSuffix: true,

@@ -7,7 +7,7 @@ import {
 import Sidebar from "../components/Sidebar";
 import { auth, createNote, getAllNotes } from "../firebase";
 import { FBNote, NoteType } from "../notes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { convertToNoteType } from "../utils";
 
 export async function loader() {
@@ -33,39 +33,52 @@ export async function action() {
 type DashboardContextType = {
   editorLoading: boolean;
   setEditorLoading: (val: boolean) => void;
-  updatedNotes: NoteType[];
-  setUpdatedNotes: (notes: NoteType[]) => void;
+  sidebarNotes: NoteType[];
+  setSidebarNotes: (notes: NoteType[]) => void;
   isSidebarOpen: boolean;
   setIsSidebarOpen: (val: boolean) => void;
 };
 
 export default function Dashboard() {
-  const notes = useLoaderData() as FBNote[];
+  const notes = useLoaderData() as NoteType[];
   const [editorLoading, setEditorLoading] = useState<boolean>(false);
-  const [updatedNotes, setUpdatedNotes] = useState<FBNote[]>(notes);
+  const [sidebarNotes, setSidebarNotes] = useState<NoteType[]>(notes);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const contextValue = {
     editorLoading,
     setEditorLoading,
-    updatedNotes,
-    setUpdatedNotes,
+    sidebarNotes,
+    setSidebarNotes,
     isSidebarOpen,
     setIsSidebarOpen,
   };
+
+  useEffect(() => {
+    setSidebarNotes(notes);
+  }, [notes]);
 
   return (
     <>
       <div className="main d-flex">
         <div
           id="sidebar"
-          className={`overflow-x-hidden scrollarea border-end border-3 ${isSidebarOpen ? "open":""}`}
+          className={`overflow-x-hidden scrollarea border-end border-3 ${
+            isSidebarOpen ? "open" : ""
+          }`}
         >
           <div id="sidebar_wrapper">
-            <Sidebar notes={updatedNotes} editorLoading={editorLoading} toggleSidebar={setIsSidebarOpen}/>
+            <Sidebar
+              notes={sidebarNotes}
+              editorLoading={editorLoading}
+              toggleSidebar={setIsSidebarOpen}
+            />
           </div>
         </div>
-        <div id="page-content" className="overflow-x-hidden scrollarea flex-grow-1">
+        <div
+          id="page-content"
+          className="overflow-x-hidden scrollarea flex-grow-1"
+        >
           <Outlet context={contextValue} />
         </div>
       </div>

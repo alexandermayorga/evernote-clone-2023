@@ -1,7 +1,7 @@
 //TODO: need 2 states: 1) without any notes 2) with notes 3) need a button to create a new note
 
 import { Form, NavLink } from "react-router-dom";
-import { FBNote } from "../notes.ts";
+import { NoteType } from "../notes.ts";
 import NotePreview from "./NotePreview.tsx";
 import { useEffect, useState } from "react";
 import Dropdown from "react-bootstrap/esm/Dropdown";
@@ -16,14 +16,18 @@ export default function Sidebar({
   editorLoading,
   toggleSidebar,
 }: {
-  notes: FBNote[];
+  notes: NoteType[];
   editorLoading: boolean;
   toggleSidebar: (val: boolean) => void;
 }) {
   const [sorting, setSorting] = useState<SortingType>("updated");
   const [sortDesc, setSortDesc] = useState<SortDescType>(true);
-  const [sortedNotes, setSortedNotes] = useState(notes);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortedNotes, setSortedNotes] = useState(notes);
+
+  useEffect(() => {
+    setSortedNotes(notes);
+  }, [notes]);
 
   const handleSortNotes = (newSorting: SortingType) => {
     //Is the user toggling?
@@ -43,13 +47,13 @@ export default function Sidebar({
     setSortedNotes(sortNotes(filterNotes(notes, searchQuery)));
   }, [sorting, sortDesc, searchQuery]);
 
-  function sortNotes(notes: FBNote[]): FBNote[] {
+  function sortNotes(notes: NoteType[]): NoteType[] {
     const newSortedNotes = [...notes];
     const sortQuery = sortDesc ? `-${sorting}` : sorting;
     return newSortedNotes.sort(sortBy(sortQuery));
   }
 
-  function filterNotes(notes: FBNote[], query: string) {
+  function filterNotes(notes: NoteType[], query: string) {
     const filteredNotes = matchSorter(notes, query, {
       keys: ["title", "content.blocks.*.data.text"],
       threshold: matchSorter.rankings.CONTAINS,
@@ -76,7 +80,11 @@ export default function Sidebar({
           <span className="fs-3 fw-semibold lh-1">Notes List</span>
         </NavLink>
         <div className="align-self-center me-3 d-md-none">
-          <button type="button" className="btn btn-secondary btn-sm" onClick={()=>toggleSidebar(false)}>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={() => toggleSidebar(false)}
+          >
             <i className="bi bi-caret-left-fill"></i> Hide Sidebar
           </button>
         </div>
@@ -89,7 +97,7 @@ export default function Sidebar({
                 type="submit"
                 className="btn btn-primary rounded-pill w-100 text-start mb-2 ps-4"
               >
-                <i className="bi bi-file-earmark-plus"></i> New
+                <i className="bi bi-journal-plus me-1"></i> New Note
               </button>
             </Form>
             <div className="d-flex">

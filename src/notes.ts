@@ -24,7 +24,7 @@ export type Updated = {
   nanoseconds: number;
 };
 
-const notes: Note[] = [
+const notes: FBNote[] = [
   {
     id: 1,
     title: "note title 1",

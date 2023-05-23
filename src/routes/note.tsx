@@ -2,7 +2,6 @@
 import {
   Form,
   Params,
-  // useFetcher,
   useLoaderData,
   useNavigate,
 } from "react-router-dom";
@@ -40,7 +39,7 @@ export default function NoteEditor() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
-  const { setEditorLoading, updatedNotes, setUpdatedNotes, setIsSidebarOpen } = useDashboard();
+  const { setEditorLoading, sidebarNotes, setSidebarNotes, setIsSidebarOpen } = useDashboard();
 
   const note = useLoaderData() as NoteType;
 
@@ -73,7 +72,7 @@ export default function NoteEditor() {
 
   const handleButtonSave = async () => {
     if (!user) return navigate("/login");
-    if (content.blocks == note.content?.blocks && title == note.title) {
+    if (note.content && content.blocks == note.content.blocks && title == note.title) {
       console.log("Either the content or the title are the same");
       return;
     }
@@ -87,14 +86,14 @@ export default function NoteEditor() {
       // console.log("Document updated!");
       //Update the Sidebar with new content
 
-      const notesForSideBar = [...updatedNotes];
+      const notesForSideBar = [...sidebarNotes];
 
       const foundIndex = notesForSideBar.findIndex(
         (prevNote) => prevNote.id == note.id
       );
       notesForSideBar[foundIndex].title = titleRef.current;
       notesForSideBar[foundIndex].content = content;
-      setUpdatedNotes(notesForSideBar);
+      setSidebarNotes(notesForSideBar);
 
       setTimeout(() => {
         setShowToast(false);
