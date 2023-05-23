@@ -31,7 +31,7 @@ html,
   .main > div {
     /* min-width: 0; */
     flex-grow: 1;
-    transition: width 0.5s;
+    transition: width 0.35s;
   }
 
   #sidebar {
@@ -54,6 +54,9 @@ html,
   #sidebar_wrapper {
     width: 100vw;
   }
+}
+#note_wrapper{
+  height: 100vh;
 }
 
 .scrollarea {

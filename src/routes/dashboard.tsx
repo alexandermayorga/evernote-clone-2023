@@ -65,7 +65,7 @@ export default function Dashboard() {
             <Sidebar notes={updatedNotes} editorLoading={editorLoading} toggleSidebar={setIsSidebarOpen}/>
           </div>
         </div>
-        <div id="page-content" className="overflow-x-hidden scrollarea">
+        <div id="page-content" className="overflow-x-hidden scrollarea flex-grow-1">
           <Outlet context={contextValue} />
         </div>
       </div>

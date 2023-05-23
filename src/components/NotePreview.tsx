@@ -43,7 +43,7 @@ export default function NotePreview({
             }`}
           >
             {/* //TODO remove this after fix - nested objects */}
-            {convertOutputDataToText(content)}
+            {content && convertOutputDataToText(content)}
           </div>
           <div className={`col-10 small ${!isActive ? "text-muted" : ""}`}>
             {days >= 0 ? result : result2}

@@ -73,16 +73,13 @@ export default function NoteEditor() {
 
   const handleButtonSave = async () => {
     if (!user) return navigate("/login");
-    if (content.blocks == note.content.blocks && title == note.title) {
+    if (content.blocks == note.content?.blocks && title == note.title) {
       console.log("Either the content or the title are the same");
       return;
     }
 
-    console.log(content);
-    
-    return
     setShowToast(true);
-    
+
     const contentJSON = JSON.stringify(content);
 
     try {
