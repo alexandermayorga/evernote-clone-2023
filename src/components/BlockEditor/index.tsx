@@ -11,7 +11,7 @@ type PropTypes = {
 };
 
 const BlockEditor = ({ note, onReady, onChanges, data }: PropTypes) => {
-  const editorRef = useRef<EditorJS | null>();
+  const editorRef = useRef<EditorJS | null>(null);
 
   const initEditor = () => {
     const editor = new EditorJS({
