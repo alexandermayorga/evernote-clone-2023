@@ -18,12 +18,11 @@ export default function NotePreview({
   // console.log(note.updated.toDate());
   // console.log(note);
 
-  const totimeString = new Date(updated.toDate());
-  const days = differenceInDays(totimeString, Date.now());
-  const result = formatDistanceToNowStrict(new Date(totimeString), {
+  const days = differenceInDays(updated.toDate(), Date.now());
+  const result = formatDistanceToNowStrict(updated.toDate(), {
     addSuffix: true,
   });
-  const result2 = format(new Date(totimeString), "MMM dd, yyyy");
+  const result2 = format(updated.toDate(), "MMM dd, yyyy");
 
   return (
     <NavLink

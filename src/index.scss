@@ -21,22 +21,19 @@ html,
 }
 
 #sidebar {
-  @media (min-width: 768px) {
+  @include media-breakpoint-up(lg) {
     max-width: 330px;
   }
   // max-width: 380px;
 }
 
-@media screen and (max-width: 767px) {
+@include media-breakpoint-down(lg) {
   .main > div {
-    /* min-width: 0; */
-    flex-grow: 1;
     transition: width 0.35s;
   }
 
   #sidebar {
     width: 0;
-    /* overflow-x: hidden; */
   }
   #sidebar.open {
     width: 100%;
@@ -47,15 +44,16 @@ html,
 
   #page-content {
     width: 100%;
-    /* overflow-x: hidden; */
   }
 
   #note_wrapper,
-  #sidebar_wrapper {
+  #sidebar_wrapper,
+  #dashboardIndex {
     width: 100vw;
   }
 }
-#note_wrapper{
+
+#note_wrapper {
   height: 100vh;
 }
 

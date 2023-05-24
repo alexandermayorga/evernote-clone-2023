@@ -6,7 +6,7 @@ export type NoteType = {
   title: string;
   content: OutputData;
   author: string;
-  created: number;
+  created: Timestamp;
   updated: Timestamp;
 };
 
@@ -15,7 +15,7 @@ export type FBNote = {
   title: string;
   content: string;
   author: string;
-  created: number;
+  created: Timestamp;
   updated: Timestamp;
 };
 

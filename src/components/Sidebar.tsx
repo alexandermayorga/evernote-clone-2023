@@ -79,7 +79,7 @@ export default function Sidebar({
           />
           <span className="fs-3 fw-semibold lh-1">Notes List</span>
         </NavLink>
-        <div className="align-self-center me-3 d-md-none">
+        <div className="align-self-center me-3 d-lg-none">
           <button
             type="button"
             className="btn btn-secondary btn-sm"

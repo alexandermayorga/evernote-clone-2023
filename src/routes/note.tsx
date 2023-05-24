@@ -158,7 +158,7 @@ export default function NoteEditor() {
   return (
     <div id="note_wrapper" className="p-4">
       <div id="notes_header">
-        <div className="mb-3 d-md-none text-end">
+        <div className="mb-3 d-lg-none text-end">
           <button
             type="button"
             className="btn btn-secondary btn-sm"
@@ -171,8 +171,7 @@ export default function NoteEditor() {
         <div id="buttons" className="w-100 d-flex justify-content-between mb-2">
           <div className="text-muted">
             created on:{" "}
-            {typeof note.created === "number" &&
-              format(new Date(note.created), "MMM dd, yyyy")}
+            {format(note.created.toDate(), "MMM dd, yyyy")}
           </div>
           <div>
             <button
