@@ -31,7 +31,7 @@ export default function NotePreview({
         disabled && "disabled"
       }`}
     >
-      {({ isActive, isPending }) => (
+      {({ isActive }) => (
         <span className={isActive ? "active" : ""}>
           <div className="d-flex w-100">
             <strong className="mb-1 line-clamp-2">{title}</strong>

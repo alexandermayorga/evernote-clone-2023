@@ -19,7 +19,7 @@ const BlockEditor = ({ note, onReady, onChanges, data }: PropTypes) => {
         editorRef.current = editor;
         if (onReady) onReady(editor);
       },
-      onChange: async (api: API, event: CustomEvent) => {
+      onChange: async (api: API) => {
         let content;
         if (!api.readOnly.isEnabled) {
           try {

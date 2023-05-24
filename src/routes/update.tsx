@@ -1,5 +1,5 @@
 import { Params } from "react-router-dom";
-import { updateNote } from "../firebase.ts";
+// import { updateNote } from "../firebase.ts";
 
 export async function action({ params, request }: {params:Params, request:Request}) {  
   if (!params || !params.noteId) throw new Error("oh dang!");

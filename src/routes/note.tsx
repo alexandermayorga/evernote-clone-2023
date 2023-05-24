@@ -210,7 +210,7 @@ export default function NoteEditor() {
       <hr />
       <BlockEditor
         note={note}
-        onReady={(editorInstance) => setEditorLoading(false)}
+        onReady={() => setEditorLoading(false)}
         onChanges={handleEditorChanges}
         data={note.content}
       />
