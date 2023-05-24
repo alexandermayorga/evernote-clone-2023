@@ -63,11 +63,11 @@ export default function Dashboard() {
       <div className="main d-flex">
         <div
           id="sidebar"
-          className={`overflow-x-hidden scrollarea border-end border-3 flex-grow-1 ${
+          className={`overflow-x-hidden scrollarea flex-grow-1 ${
             isSidebarOpen ? "open" : ""
           }`}
         >
-          <div id="sidebar_wrapper">
+          <div id="sidebar_wrapper" className="border-end-lg">
             <Sidebar
               notes={sidebarNotes}
               editorLoading={editorLoading}

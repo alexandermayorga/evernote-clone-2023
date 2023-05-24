@@ -1,73 +1,9 @@
-@import "bootstrap";
-@import "bootstrap-icons/font/bootstrap-icons.css";
-
-// $enable-negative-margins: true;
-
-body,
-html {
-  background-color: #f8f8f8;
-}
-body,
-html,
-.full-height {
-  min-height: 100vh;
-}
-
-.main {
-  height: 100vh;
-  max-height: 100vh;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-#sidebar {
-  @include media-breakpoint-up(lg) {
-    max-width: 330px;
-  }
-  // max-width: 380px;
-}
-
-@include media-breakpoint-down(lg) {
-  .main > div {
-    transition: width 0.35s;
-  }
-
-  #sidebar {
-    width: 0;
-  }
-  #sidebar.open {
-    width: 100%;
-  }
-  #sidebar.open + #page-content {
-    width: 0;
-  }
-
-  #page-content {
-    width: 100%;
-  }
-
-  #note_wrapper,
-  #sidebar_wrapper,
-  #dashboardIndex {
-    width: 100vw;
-  }
-}
-
-#note_wrapper {
-  height: 100vh;
+.outline-focus-none:focus {
+  outline: none;
 }
 
 .scrollarea {
   overflow-y: auto;
-}
-
-.ce-block__content,
-.ce-toolbar__content {
-  max-width: 85%;
-}
-
-.outline-focus-none:focus {
-  outline: none;
 }
 
 .rounded-pill {
@@ -79,10 +15,6 @@ html,
     border-top-right-radius: var(--bs-border-radius-pill) !important;
     border-bottom-right-radius: var(--bs-border-radius-pill) !important;
   }
-}
-
-#dropdown-sort-notes.dropdown-toggle::after {
-  content: none;
 }
 
 // .line-clamp-2 {
