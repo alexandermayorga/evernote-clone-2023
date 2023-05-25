@@ -1,10 +1,5 @@
 // type Props = {}
-import {
-  Form,
-  Params,
-  useLoaderData,
-  useNavigate,
-} from "react-router-dom";
+import { Form, Params, useLoaderData, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { FBNote, NoteType } from "../notes.ts";
 import { OutputData } from "@editorjs/editorjs";
@@ -39,7 +34,8 @@ export default function NoteEditor() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
-  const { setEditorLoading, sidebarNotes, setSidebarNotes, setIsSidebarOpen } = useDashboard();
+  const { setEditorLoading, sidebarNotes, setSidebarNotes, setIsSidebarOpen } =
+    useDashboard();
 
   const note = useLoaderData() as NoteType;
 
@@ -55,7 +51,7 @@ export default function NoteEditor() {
     setTitle(note.title);
     titleRef.current = note.title;
     setContent(note.content || DEFAULT_EDITORJS_DATA);
-    setIsSidebarOpen(false)
+    setIsSidebarOpen(false);
   }, [note]);
 
   //This is for the Title
@@ -72,7 +68,11 @@ export default function NoteEditor() {
 
   const handleButtonSave = async () => {
     if (!user) return navigate("/login");
-    if (note.content && content.blocks == note.content.blocks && title == note.title) {
+    if (
+      note.content &&
+      content.blocks == note.content.blocks &&
+      title == note.title
+    ) {
       console.log("Either the content or the title are the same");
       return;
     }
@@ -158,29 +158,8 @@ export default function NoteEditor() {
   return (
     <div id="note_wrapper" className="p-4">
       <div id="notes_header">
-        <div className="mb-3 d-lg-none text-end">
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            aria-label="Close Sidebar"
-            onClick={()=> setIsSidebarOpen(true)}
-          >
-            <i className="bi bi-caret-right-fill"></i> View All Notes
-          </button>
-        </div>
-        <div id="buttons" className="w-100 d-flex justify-content-between mb-2">
-          <div className="text-muted">
-            created on:{" "}
-            {format(note.created.toDate(), "MMM dd, yyyy")}
-          </div>
+        <div id="buttons" className="w-100 d-flex justify-content-between justify-content-lg-end mb-2">
           <div>
-            <button
-              className="btn btn-success btn-sm me-2"
-              type="button"
-              onClick={handleButtonSave}
-            >
-              <i className="bi bi-database"></i> Update
-            </button>
             <Form
               method="post"
               action="destroy"
@@ -190,12 +169,29 @@ export default function NoteEditor() {
                 )
                   event.preventDefault();
               }}
-              className="d-inline"
+              className="d-inline me-2"
             >
               <button type="submit" className="btn btn-danger btn-sm">
                 <i className="bi bi-trash"></i> Delete
               </button>
             </Form>
+            <button
+              className="btn btn-success btn-sm"
+              type="button"
+              onClick={handleButtonSave}
+            >
+              <i className="bi bi-database"></i> Update
+            </button>
+          </div>
+          <div className="mb-3 d-lg-none text-end">
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              aria-label="Close Sidebar"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <i className="bi bi-caret-right-fill"></i> View All Notes
+            </button>
           </div>
         </div>
         <ContentEditable
@@ -206,6 +202,9 @@ export default function NoteEditor() {
           // onKeyDown={handleTitleKeyDown}
           tagName="h1"
         />
+        <div className="text-muted">
+          created on: {format(note.created.toDate(), "MMM dd, yyyy")}
+        </div>
       </div>
       <hr />
       <BlockEditor
