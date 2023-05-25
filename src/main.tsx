@@ -39,7 +39,7 @@ const router = createBrowserRouter([
             <Dashboard />
           </ProtectedRoute>
         ),
-        errorElement: <ErrorPage />,
+        errorElement: <ProtectedRoute><ErrorPage /></ProtectedRoute>,
         loader: dashboardLoader,
         action: dashboardAction,
         children: [
