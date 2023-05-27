@@ -39,8 +39,12 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const unsubscribe = onAuthStateChanged(auth, (newUser) => {
       setUser(newUser);
       setLoading(false); //At this point it did the verification to check if there is a user signed in.
+      localStorage.setItem("author", newUser?.uid || "");
     });
-    return unsubscribe;
+    return ()=>{
+      unsubscribe()
+      localStorage.removeItem("author");
+    };
   }, []);
 
   const signup = (email: string, password: string) => {

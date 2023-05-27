@@ -26,7 +26,7 @@ export async function loader() {
 
 export async function action() {
   //#TODO validate string instead of File
-  const docRef = await createNote(auth.currentUser?.email as string);
+  const docRef = await createNote(auth.currentUser?.uid as string);
   return redirect(`note/${docRef.id}`);
 }
 
@@ -63,11 +63,11 @@ export default function Dashboard() {
       <div className="main d-flex">
         <div
           id="sidebar"
-          className={`overflow-x-hidden scrollarea flex-grow-1 ${
+          className={`overflow-x-hidden scrollarea flex-grow-1 border-end-lg ${
             isSidebarOpen ? "open" : ""
           }`}
         >
-          <div id="sidebar_wrapper" className="border-end-lg">
+          <div id="sidebar_wrapper" className="">
             <Sidebar
               notes={sidebarNotes}
               editorLoading={editorLoading}

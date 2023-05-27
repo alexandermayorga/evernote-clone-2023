@@ -24,6 +24,7 @@ html,
 
 #sidebar {
   @include media-breakpoint-up(lg) {
+    min-width: 330px;
     max-width: 330px;
   }
   // max-width: 380px;

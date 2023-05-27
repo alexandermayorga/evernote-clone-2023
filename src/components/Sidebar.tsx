@@ -178,9 +178,9 @@ export default function Sidebar({
               <NotePreview note={note} key={note.id} disabled={editorLoading} />
             ))
           ) : (
-            <p className="text-muted">
-              <i>No Notes</i>
-            </p>
+            <div className="d-flex w-100 justify-content-center">
+              <p className="text-muted m-3">No Notes</p>
+            </div>
           )}
         </div>
       </div>

@@ -17,6 +17,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -44,25 +45,10 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 const COLLECTION_NOTES = "notes";
-/**
- * Saves a New Document to DB
- * @param id Note Id in Firebase
- * @param title Note Title
- * @param content Editor JS Output Data as JSON string
- * @returns Promise with either the DocRef or an error
- */
-export function updateNote(id: string, title: string, content: string) : Promise<void>{
-  return updateDoc(doc(db, COLLECTION_NOTES, id), {
-    title,
-    content,
-    updated: Timestamp.now()
-  });
-}
 
-export function createNote(userEmail: string): Promise<DocumentReference> {
-  // console.log(auth.currentUser?.email)  
+export function createNote(userUID: string): Promise<DocumentReference> {
   return addDoc(collection(db, COLLECTION_NOTES), {
-    author: userEmail,
+    author: userUID,
     title: "Untitled",
     content: null,
     created: Timestamp.now(),
@@ -70,12 +56,33 @@ export function createNote(userEmail: string): Promise<DocumentReference> {
   });
 }
 
+/**
+ * Saves a New Document to DB
+ * @param id Note Id in Firebase
+ * @param title Note Title
+ * @param content Editor JS Output Data as JSON string
+ * @returns Promise with either the DocRef or an error
+ */
+export function updateNote(
+  noteID: string,
+  title: string,
+  content: string
+): Promise<void> {
+  return updateDoc(doc(db, COLLECTION_NOTES, noteID), {
+    title,
+    content,
+    updated: Timestamp.now(),
+  });
+}
+
 export function getAllNotes(): Promise<QuerySnapshot<DocumentData>> {
-  const q = query(collection(db, COLLECTION_NOTES), orderBy("updated","desc"));
-  // const q = query(collection(db, COLLECTION_NOTES), orderBy("created"));
-  
+  const author = localStorage.getItem("author");
+  const q = query(
+    collection(db, COLLECTION_NOTES),
+    where("author", "==", author),
+    orderBy("updated", "desc")
+  );
   return getDocs(q);
-  
 }
 
 export function getNote(id: string): Promise<DocumentSnapshot<DocumentData>> {
