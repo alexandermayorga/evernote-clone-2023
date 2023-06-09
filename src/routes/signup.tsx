@@ -101,7 +101,7 @@ export default function SignUp({ title }: Props) {
         </button>
         <div>
           <Link to="/login" className="">
-            Don't have have an account yet? Sign up here.
+          Already have an account? Log in here.
           </Link>
         </div>
         <p className="mt-5 mb-3 text-muted">© 2023</p>

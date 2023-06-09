@@ -11,8 +11,8 @@ type Props = {
 export default function Login({ title }: Props) {
   const pageTitle = `${title}`;
   useEffect(() => {
-    document.title = pageTitle
-  }, [])
+    document.title = pageTitle;
+  }, []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -102,7 +102,7 @@ export default function Login({ title }: Props) {
         </button>
         <div>
           <Link to="/signup" className="">
-            Already have an account? Log in here.
+            Don't have have an account yet? Sign up here.
           </Link>
         </div>
         <p className="mt-5 mb-3 text-muted">© 2023</p>
