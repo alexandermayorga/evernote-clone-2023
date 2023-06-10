@@ -11,19 +11,19 @@ For the backend, Firebase is chosen as the hosting solution, providing a reliabl
 ## Frontend
 The frontend of the project incorporates the following technologies and frameworks:
 
-- HTML5, CSS3, JavaScript, and Sass: These web technologies form the foundation for creating the user interface and styling the application.
+- **HTML5, CSS3, JavaScript, and Sass:** These web technologies form the foundation for creating the user interface and styling the application.
 
-- Bootstrap 5: Bootstrap is employed as the CSS framework to enhance the visual appearance and responsiveness of the application. It provides a set of pre-defined styles and components that facilitate rapid development.
+- **Bootstrap 5:** Bootstrap is employed as the CSS framework to enhance the visual appearance and responsiveness of the application. It provides a set of pre-defined styles and components that facilitate rapid development.
 
-- React: The project utilizes React, a popular front-end JavaScript library, to build the user interface components and handle the application's state management efficiently.
+- **React:** The project utilizes React, a popular front-end JavaScript library, to build the user interface components and handle the application's state management efficiently.
 
-- EditorJS: To enable a more robust editing experience, the project integrates EditorJS as a rich text editor. EditorJS allows users to create notes with enhanced features such as tables, headings, dividers, lists, and checklists. You can learn more about EditorJS and its benefits at https://editorjs.io.
+- **EditorJS:** To enable a more robust editing experience, the project integrates EditorJS as a rich text editor. EditorJS allows users to create notes with enhanced features such as tables, headings, dividers, lists, and checklists. You can learn more about EditorJS and its benefits at https://editorjs.io.
 
-- React Router: The latest version of React Router is employed to handle client-side navigation within the application. This enables seamless transitions between different sections of the app and improves user experience.
+- **React Router:** The latest version of React Router is employed to handle client-side navigation within the application. This enables seamless transitions between different sections of the app and improves user experience.
 
-- TypeScript: The project incorporates TypeScript to enhance code reliability and maintainability. TypeScript provides type safety, allowing for easier debugging and reducing potential runtime errors.
+- **TypeScript:** The project incorporates TypeScript to enhance code reliability and maintainability. TypeScript provides type safety, allowing for easier debugging and reducing potential runtime errors.
 
-- ViteJS: Instead of using webpack, which is highly popular in react projects, the project utilizes ViteJS for front-end tooling. ViteJS is a build tool that focuses on fast development and better performance. While webpack is still a valid option, ViteJS proved to be fast and easy to work with. More information about ViteJS can be found at https://vitejs.dev/.
+- **ViteJS:** Instead of using webpack, which is highly popular in react projects, the project utilizes ViteJS for front-end tooling. ViteJS is a build tool that focuses on fast development and better performance. While webpack is still a valid option, ViteJS proved to be fast and easy to work with. More information about ViteJS can be found at https://vitejs.dev/.
 
 ## Key Features
 The Evernote Clone project offers several key features, including:
