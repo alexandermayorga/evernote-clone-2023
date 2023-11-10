@@ -105,7 +105,7 @@ export default function Login({ title }: Props) {
             Don't have have an account yet? Sign up here.
           </Link>
         </div>
-        <p className="mt-5 mb-3 text-muted">© 2023</p>
+        <p className="mt-5 mb-3 text-muted">© Mammoth Notes 2023</p>
       </form>
     </main>
   );
